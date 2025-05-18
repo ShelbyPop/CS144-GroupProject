@@ -1,52 +1,88 @@
 import React, { useState } from 'react';
-import tileArt from '../assets/Temp-tower-art.png';
 import emptyTile from '../assets/Empty-tile.png';
+import pathTile from '../assets/Path-tile.png';
+import placeableTile from '../assets/Placeable-tile.png';
+import towerArt    from '../assets/Temp-tower-art.png';
 
 export default function Grid() {
   const COLS = 16;
   const ROWS = 10;
-  const tileSize = 800 / COLS;      // = 50px here
+  const tileSize = 800 / COLS; // 50px
 
-  // State: an array of booleans; true = empty, false = original
-  const [isEmpty, setIsEmpty] = useState(
-    Array.from({ length: ROWS * COLS }, () => false)
-  );
+  // helper: (x,y) → index
+  const idxOf = (x, y) => y * COLS + x;
 
-  const handleClick = (i) => {
-    setIsEmpty((prev) => {
+  // define the fixed path tiles
+  const pathCoords = new Set();
+  for (let x = 0; x <= 7; x++) pathCoords.add(idxOf(x, 4));
+  for (let x = 7; x < COLS; x++) pathCoords.add(idxOf(x, 5));
+
+  // compute placeable neighbors
+  const neighborOffsets = [
+    [-1,-1],[0,-1],[1,-1],
+    [-1, 0],       [1, 0],
+    [-1, 1],[0, 1],[1, 1],
+  ];
+  const placeableCoords = new Set();
+  pathCoords.forEach(idx => {
+    const x = idx % COLS, y = Math.floor(idx / COLS);
+    neighborOffsets.forEach(([dx,dy]) => {
+      const nx = x+dx, ny = y+dy;
+      if (nx>=0 && nx<COLS && ny>=0 && ny<ROWS) {
+        const nIdx = idxOf(nx,ny);
+        if (!pathCoords.has(nIdx)) placeableCoords.add(nIdx);
+      }
+    });
+  });
+
+  // initial tile types: 'empty', 'path', or 'placeable'
+  const initialTypes = Array(ROWS*COLS).fill('empty');
+  pathCoords.forEach(i => initialTypes[i] = 'path');
+  placeableCoords.forEach(i => initialTypes[i] = 'placeable');
+
+  // add 'tower' as a new type when you place one
+  const [tileTypes, setTileTypes] = useState(initialTypes);
+
+  // click handler: only place on 'placeable'
+  const handleClick = (idx) => {
+    setTileTypes(prev => {
+      // only change if it was placeable
+      if (prev[idx] !== 'placeable') return prev;
       const next = [...prev];
-      next[i] = !next[i];
+      next[idx] = 'tower';
       return next;
     });
   };
 
-  // Generate an array [0..ROWS-1], [0..COLS-1]
-  const tiles = [];
-  for (let y = 0; y < ROWS; y++) {
-    for (let x = 0; x < COLS; x++) {
-      const idx = y * COLS + x;
-      tiles.push({ x, y, idx });
-    }
-  }
-
+  // render all tiles
   return (
     <>
-      {tiles.map(({ x, y, idx }) => (
-        <img
-          key={idx}
-          src={isEmpty[idx] ? emptyTile : tileArt}
-          className="tile"
-          alt="Tile"
-          onClick={() => handleClick(idx)}
-          style={{
-            left: x * tileSize,
-            top: y * tileSize,
-            width: tileSize,
-            height: tileSize,
-            cursor: 'pointer',
-          }}
-        />
-      ))}
+      {tileTypes.map((type, idx) => {
+        const x = idx % COLS, y = Math.floor(idx / COLS);
+        let src;
+        switch(type) {
+          case 'path':      src = pathTile;      break;
+          case 'placeable': src = placeableTile; break;
+          case 'tower':     src = towerArt;      break;
+          default:          src = emptyTile;
+        }
+        return (
+          <img
+            key={idx}
+            src={src}
+            className="tile"
+            alt={`${type} tile`}
+            onClick={() => handleClick(idx)}
+            style={{
+              left: x * tileSize,
+              top:  y * tileSize,
+              width:  tileSize,
+              height: tileSize,
+              cursor: type === 'placeable' ? 'pointer' : 'default',
+            }}
+          />
+        );
+      })}
     </>
   );
 }
