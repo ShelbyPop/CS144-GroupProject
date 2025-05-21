@@ -13,7 +13,7 @@ router.get('/viewGameProgress/:username', async(req,res)=>{
       return res.status(404).json({ error: 'User not found' });
     }
 
-  const progress = await GameProgress.findOne({ gamer: user._id }).populate('gamer','username');
+  const progress = await GameProgress.findOne({ gamer: user._id }).populate('gamer','username avatarname');
 
   if (!progress){
      return res.status(404).json({ error: 'Game Progress Not Found' });

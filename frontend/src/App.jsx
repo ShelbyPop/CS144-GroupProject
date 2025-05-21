@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './App.css'
 import Grid from './components/Grid';
 
-function App() {
+function App({userName}) {
   const [started, setStarted] = useState(false);
   const [waveStarted, setWaveStarted] = useState(false);
   const [enemies, setEnemies] = useState([]);

@@ -43,7 +43,7 @@ router.post('/signup', async (req, res) => {
   const { username, password, email } = req.body;
 
   try {
-    const existing = await User.findOne({ $or: [{ username }, { email }] });
+    const existing = await User.findOne({ username  });
     if (existing) {
       return res.status(400).json({ error: 'User already exists' });
     }
