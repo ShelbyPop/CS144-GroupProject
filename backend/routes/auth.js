@@ -5,8 +5,36 @@ const router = express.Router();
 
 const createToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-router.get('/hello', (req, res) => {
-  res.send('Hello from auth route!');
+router.get('/viewavatarname/:username', async (req, res) => {
+   const { username } = req.params;
+   try{
+    const player = await User.findOne({ username: username });
+     if (!player) {
+      return res.status(404).json({ error: 'Player not found' });
+    }
+    res.send(player.avatarname);
+   }catch(error){
+    console.error('Error fetching avatar name:', error);
+   res.status(500).json({ error: 'Server error' });
+   }
+
+});
+
+router.post('/assignavatarname/:username/:avatarname', async (req, res) => {
+  const {username,avatarname}= req.params;
+  try{
+    const player = await User.findOne({ username:username });
+    if (!player){
+      return res.status(404).json({error:"User Not Found"});
+    }
+    player.avatarname= avatarname;
+    await player.save();
+    res.status(200).json({ message: 'Avatar Name Assigned' });
+  }catch(error){
+    console.error('Error assigning avatar name:', error);
+   res.status(500).json({ error: 'Server error' });
+  }
+
 });
 
 router.post('/signup', async (req, res) => {
