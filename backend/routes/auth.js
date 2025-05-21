@@ -5,16 +5,20 @@ const router = express.Router();
 
 const createToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
+router.get('/hello', (req, res) => {
+  res.send('Hello from auth route!');
+});
+
 router.post('/signup', async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, email } = req.body;
 
   try {
-    const existing = await User.findOne({ username });
+    const existing = await User.findOne({ $or: [{ username }, { email }] });
     if (existing) {
       return res.status(400).json({ error: 'User already exists' });
     }
 
-    const newUser = await User.create({ username, password });
+    const newUser = await User.create({ username, password, email });
 
     const token = createToken(newUser._id);
 
@@ -28,9 +32,12 @@ router.post('/signup', async (req, res) => {
     res.status(201).json({ message: 'User registered successfully' });
 
   } catch (err) {
+     console.error('Signup error:', err); 
     res.status(500).json({ error: 'Something went wrong during signup' });
   }
 });
+
+
 
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
@@ -56,6 +63,9 @@ router.post('/logout', (req, res) => {
   res.clearCookie('token');
   res.status(200).json({ message: 'Logged out' });
 });
+
+
+
 
 
 module.exports = router;
