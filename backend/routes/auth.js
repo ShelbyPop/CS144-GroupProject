@@ -5,6 +5,7 @@ const router = express.Router();
 
 const createToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
+//curl -X GET http://localhost:3000/api/auth/viewavatarname/testuser1  should get back Dragaonball
 router.get('/viewavatarname/:username', async (req, res) => {
    const { username } = req.params;
    try{
@@ -20,6 +21,7 @@ router.get('/viewavatarname/:username', async (req, res) => {
 
 });
 
+/*curl -X POST http://localhost:3000/api/auth/assignavatarname/testuser1/Dragaonball*/
 router.post('/assignavatarname/:username/:avatarname', async (req, res) => {
   const {username,avatarname}= req.params;
   try{

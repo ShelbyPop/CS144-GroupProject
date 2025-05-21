@@ -3,11 +3,13 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const authRoutes = require('./routes/auth.js');
+const gameProgressRoutes = require('./routes/gameProgress.js');
 
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use('/api/auth', authRoutes);
+app.use('/api/gameProgress',gameProgressRoutes);
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
