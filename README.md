@@ -1,5 +1,5 @@
 # TO RUN THE TEST SERVER(S)
-1. (First time only): Create .env with variables provided for database
+1. (First time only): Create .env with variables provided for database in /backend/
 2. Open /backend/ in a terminal, and run 'npm start' 
 3. Open /frontend/ in a separate terminal, and run 'npx vite' or 'npx run dev' on port 5173
 4. Test Login is:
