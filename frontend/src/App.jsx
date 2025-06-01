@@ -1,45 +1,17 @@
-import React, { useState } from 'react';
-import './App.css'
-import Grid from './components/Grid';
+// src/App.jsx
+import React from "react";
+import GameCanvas from "./components/GameCanvas.jsx";
 
-function App({userName}) {
-  const [started, setStarted] = useState(false);
-  const [waveStarted, setWaveStarted] = useState(false);
-  const [enemies, setEnemies] = useState([]);
-
-  const handleStart = () => {
-    setStarted(true);
-  };
-
-  const handleBeginWave = () => {
-    setWaveStarted(true);
-    // spawn one zombie at col=0,row=4
-    setEnemies([{ x: 0, y: 4 }]);
-  };
-
-
+export default function App({ username }) {
   return (
-    <div className="viewport">
-      {/* Start button + overlay */}
-      {!started && (
-        <div className="viewport-overlay">
-          <div className="hud-button" onClick={handleStart}>
-            START GAME
-          </div>
-        </div>
-      )}
+    <div>
+      {/* You can show the username anywhere if desired */}
+      <div style={{ padding: "8px", background: "#222", color: "#fff" }}>
+        Logged in as: {username}
+      </div>
 
-       {/* Begin Wave button, available once started */}
-      {started && !waveStarted && (
-        <div className="begin-wave-button" onClick={handleBeginWave}>
-          Begin Wave
-        </div>
-      )}
-
-      {/* grid + any spawned enemies */}
-      <Grid enemies={enemies} />
+      {/* The actual game canvas component */}
+      <GameCanvas />
     </div>
   );
 }
-
-export default App;
