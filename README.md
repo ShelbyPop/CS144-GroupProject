@@ -9,3 +9,5 @@
 # TO PLAY THE GAME
 - Each Grass platform is an available spot to place a 2x2 tower on. 
 - The top left tile of each grass platform is where you should hover and click (drag and drop later) to place the tower.
+- Towers currently cost 50 coins, and you start with 100. Each kill of an enemy earns you 10 coins.
+- There are now waves where after every subsequent wave kill, 2 additional enemies will spawn!

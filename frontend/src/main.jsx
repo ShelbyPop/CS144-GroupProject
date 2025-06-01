@@ -1,10 +1,9 @@
 import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
+import ReactDOM from 'react-dom/client';
 import './index.css';
 import Root from './root.jsx';
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <Root />
-  </StrictMode>
+ReactDOM.createRoot(document.getElementById('root')).render(
+  // removed strict mode, was hooking animate() twice.
+  <Root />
 );
