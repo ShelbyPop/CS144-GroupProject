@@ -5,3 +5,7 @@
 4. Test Login is:
 - User: testuser3
 - Password: test3
+
+# TO PLAY THE GAME
+- Each Grass platform is an available spot to place a 2x2 tower on. 
+- The top left tile of each grass platform is where you should hover and click (drag and drop later) to place the tower.
