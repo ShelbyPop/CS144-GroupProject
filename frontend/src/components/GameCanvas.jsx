@@ -122,7 +122,7 @@ export default function GameCanvas() {
         const xDistance = waypoint.x - this.center.x;
         const angle = Math.atan2(yDistance, xDistance);
         // Angle determines velocity.
-        const speedAmp = 0.3; // speed amplifier, default 1
+        const speedAmp = 0.6; // speed amplifier, default 1
         this.velocity.x = Math.cos(angle) * speedAmp;
         this.velocity.y = Math.sin(angle) * speedAmp;
         this.position.x += this.velocity.x 
@@ -171,7 +171,7 @@ export default function GameCanvas() {
 
       update() {
         this.draw();
-        if (this.frameCount % 200 === 0 && this.target) {
+        if (this.frameCount % 150 === 0 && this.target) {
           this.projectiles.push(
             new Projectile({
             position: {
@@ -226,8 +226,8 @@ export default function GameCanvas() {
         this.draw();
         this.angle = Math.atan2(this.enemy.center.y - this.position.y, 
           this.enemy.center.x - this.position.x); // grab angle to travel towards enemy
-        console.log(this.angle);
-        const speedAmp = 0.5; // speed amplifier to make faster than enemy
+        //console.log(this.angle);
+        const speedAmp = 1.8; // speed amplifier to make faster than enemy
         this.velocity.x = Math.cos(this.angle) * speedAmp; 
         this.velocity.y = Math.sin(this.angle) * speedAmp;
         this.position.x += this.velocity.x;

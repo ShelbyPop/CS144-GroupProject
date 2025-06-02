@@ -1,6 +1,3 @@
-// calculated with a python program. 12 images per 90 degree quadrant, given leeway its a range of +3.75 deg to -86.25 deg (+- 3.75 degree per arrow match)
-// javascript/canvas api flips the unit circle, so 90 degrees is actually straight *down*
-// note, these are all in radians.
 export function findArrowIndex(angleRad) {
   // 1) Convert raw radians → degrees in (-180 .. +180]:
   let deg = (angleRad * 180 / Math.PI);
@@ -21,13 +18,13 @@ export function findArrowIndex(angleRad) {
     // Map deg = +3.75 → inQuad = 0;  deg = -86.25 → inQuad = 90
     inQuad = 3.75 - deg;
   }
-  // ─── Quadrant 1: +90° rotation.  Range: (-176.25 .. -86.25]
+  // ─── Quadrant 1: -90° rotation.  Range: (-176.25 .. -86.25]
   else if (deg > -176.25 && deg <= -86.25) {
-    rotation = 3 * Math.PI / 2;
+    rotation = -Math.PI / 2;
     // Map deg = -86.25 → inQuad = 0;  deg = -176.25 → inQuad = 90
     inQuad = -86.25 - deg;
   }
-  // ─── Quadrant 2: +180° rotation.  Range: ( +93.75 .. +180 ]  OR  [ -180 .. -176.25 ]
+  // ─── Quadrant 2: 180° rotation.  Range: ( +93.75 .. +180 ]  OR  [ -180 .. -176.25 ]
   else if ((deg > 93.75 && deg <= 180) || (deg <= -176.25 && deg > -180)) {
     rotation = Math.PI;
     if (deg > 93.75 && deg <= 180) {
@@ -39,18 +36,19 @@ export function findArrowIndex(angleRad) {
       inQuad = 180 + deg; // because deg is negative here
     }
   }
-  // ─── Quadrant 3: +270° rotation.  Range: ( +3.75 .. +93.75]
-  else {
+  // ─── Quadrant 3: +90° rotation.  Range: ( +3.75 .. +93.75]
+  else if (deg > 3.75 && deg < 93.75 ){
     // This automatically covers deg in (3.75 .. 93.75]
     rotation = Math.PI / 2;
     // Map deg = +3.75 → inQuad = 0;  deg = +93.75 → inQuad = 90
-    inQuad = deg - 3.75;
+    inQuad = 93.75 - deg;
   }
 
   // 3) Now that inQuad [0..90], pick one of 12 sub‐bins (7.5° each, centered):
   //    index = floor((inQuad + 3.75) / 7.5), clamped to [0..11]
   index = Math.floor((inQuad + 3.75) / 7.5);
-  //console.log(index);
+  // console.log(`degree: ${deg}, index: ${index}`);
+
   if (index < 0) index = 0;
   if (index > 11) index = 11;
 
