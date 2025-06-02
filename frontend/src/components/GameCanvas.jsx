@@ -224,18 +224,7 @@ export default function GameCanvas() {
         this.radius = 5;
       }
 
-      draw() {
-
-        // Compute width/height so we can center the draw:
-        const width = this.image.width;
-        const height = this.image.height;
-
-        ctx.save();
-        ctx.translate(this.position.x, this.position.y);
-        ctx.rotate(this.rotation);
-        ctx.drawImage(this.image, -width / 2, -height / 2, width, height);
-        ctx.restore();
-      }
+      // draw() now pertains to Sprite class we inherit
 
       update() {
         
