@@ -2,6 +2,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import { waypoints } from './Waypoints.jsx';
 import { placementSelectData } from './PlacementData.jsx';
+import { findArrowIndex } from './ArrowAngles.jsx';
 
 // CANVAS MUST BE 768X512 FOR MAP SIZE
 const MAP_WIDTH = 24; // 24 tiles wide
@@ -32,6 +33,20 @@ export default function GameCanvas() {
 
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const image = new Image();
+    image.onload = () => {
+      animate();
+    }
+    image.src = 'assets/GameMap.png';
+
+    const arrowImages = [];
+    // asset guy named them backwards imo, so pushing 0 deg to 90 degrees order.
+    for (let i = 13; i >= 2; i--) {
+      const img = new Image();
+      img.src = `assets/Arrow/${i}.png`;
+      arrowImages.push(img);
+    }
 
     const placementSelectData2D = [];
 
@@ -107,7 +122,7 @@ export default function GameCanvas() {
         const xDistance = waypoint.x - this.center.x;
         const angle = Math.atan2(yDistance, xDistance);
         // Angle determines velocity.
-        const speedAmp = 1; // speed amplifier, default 1
+        const speedAmp = 0.3; // speed amplifier, default 1
         this.velocity.x = Math.cos(angle) * speedAmp;
         this.velocity.y = Math.sin(angle) * speedAmp;
         this.position.x += this.velocity.x 
@@ -156,7 +171,7 @@ export default function GameCanvas() {
 
       update() {
         this.draw();
-        if (this.frameCount % 50 === 0 && this.target) {
+        if (this.frameCount % 200 === 0 && this.target) {
           this.projectiles.push(
             new Projectile({
             position: {
@@ -168,6 +183,7 @@ export default function GameCanvas() {
           )
         }
         this.frameCount++; // increase timer
+        this.angle = 0; // angle to determine which arrow we draw.
       }
     }
 
@@ -180,25 +196,44 @@ export default function GameCanvas() {
         };
         this.enemy = enemy;
         this.radius = 5;
+
+        // this.image = new Image();
+        // this.image.src = 'assets/Arrow/13.png';
       }
 
       draw() {
-        ctx.beginPath();
-        ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'yellow';
-        ctx.fill();
+        // 1) Find which of the 12 “0°→90° bins” this.angle falls into, and how much to rotate:
+        const { index, rotation } = findArrowIndex(this.angle);
+
+        // 2) Grab that preloaded Image object:
+        const img = arrowImages[index];
+        if (!img) return; // DO NOT REMOVE THIS LINE.
+
+        // 3) Compute width/height so we can center the draw:
+        const w = img.width;
+        const h = img.height;
+
+
+        // 4) Translate to projectile‐center, rotate, then draw the arrow centered:
+        ctx.save();
+        ctx.translate(this.position.x, this.position.y);
+        ctx.rotate(rotation);
+        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+        ctx.restore();
       }
 
       update() {
         this.draw();
-        const angle = Math.atan2(this.enemy.center.y - this.position.y, 
+        this.angle = Math.atan2(this.enemy.center.y - this.position.y, 
           this.enemy.center.x - this.position.x); // grab angle to travel towards enemy
-
-        const amplitude = 3; // speed amplifier to make faster than enemy
-        this.velocity.x = Math.cos(angle) * amplitude; 
-        this.velocity.y = Math.sin(angle) * amplitude;
+        console.log(this.angle);
+        const speedAmp = 0.5; // speed amplifier to make faster than enemy
+        this.velocity.x = Math.cos(this.angle) * speedAmp; 
+        this.velocity.y = Math.sin(this.angle) * speedAmp;
         this.position.x += this.velocity.x;
         this.position.y += this.velocity.y;
+
+        //console.log(this.angle);
       }
     }
 
@@ -218,11 +253,7 @@ export default function GameCanvas() {
       })
     })
 
-    const image = new Image();
-    image.onload = () => {
-      animate();
-    }
-    image.src = 'assets/GameMap.png';
+    
 
     const enemies = []
     
@@ -286,8 +317,11 @@ export default function GameCanvas() {
         })
         tower.target = possibleTargets[0]; // very common to set targeting to front most enemy in range.
         // console.log(possibleTargets);
+      });
 
-        for (let i = tower.projectiles.length - 1; i >=0; i--) {
+      // WE SPLIT THESE UP SO THE PROJECTILES DRAW ONTOP OF THE TOWER, ALWAYS.
+      towers.forEach(tower => {
+        for (let i = tower.projectiles.length - 1; i >= 0; i--) {
           const projectile = tower.projectiles[i];
           projectile.update()
 
@@ -316,7 +350,7 @@ export default function GameCanvas() {
           // console.log(dist);
           
         }
-      })
+      });
 
       
     }
