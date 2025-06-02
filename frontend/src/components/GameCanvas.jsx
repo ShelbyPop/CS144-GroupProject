@@ -34,21 +34,27 @@ export default function GameCanvas() {
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    const arrowImages = [];
+    const enemies = [];
+    let currTile = undefined;
+    const towers = [];
+    let numEnemies = 3;
+    const placementSelectData2D = [];
+    const placementTiles = [];
+
+
     const image = new Image();
     image.onload = () => {
       animate();
     }
     image.src = 'assets/GameMap.png';
 
-    const arrowImages = [];
     // asset guy named them backwards imo, so pushing 0 deg to 90 degrees order.
     for (let i = 13; i >= 2; i--) {
       const img = new Image();
       img.src = `assets/Arrow/${i}.png`;
       arrowImages.push(img);
     }
-
-    const placementSelectData2D = [];
 
     // Converts placementSelectData to 2D array
     for (let i = 0; i < placementSelectData.length; i += MAP_WIDTH) {
@@ -78,6 +84,25 @@ export default function GameCanvas() {
         } else {
           this.color = 'rgba(255, 255, 255, 0.2)'; // default
         }
+      }
+    }
+
+    class Sprite {
+      constructor(image ) {
+        this.image = image;
+      }
+
+      draw(ctx, position, rotation = 0) {
+        if (!this.image) return; // Wait until image is loaded
+
+        const width = this.image.width;
+        const height = this.image.height;
+
+        ctx.save();
+        ctx.translate(position.x, position.y);
+        ctx.rotate(rotation);
+        ctx.drawImage(this.image, -width / 2, -height / 2, width, height);
+        ctx.restore();
       }
     }
 
@@ -187,8 +212,9 @@ export default function GameCanvas() {
       }
     }
 
-    class Projectile {
+    class Projectile extends Sprite {
       constructor( { position = { x:0, y:0 }, enemy }) {
+        super(null)
         this.position = position;
         this.velocity = {
           x: 0,
@@ -196,34 +222,23 @@ export default function GameCanvas() {
         };
         this.enemy = enemy;
         this.radius = 5;
-
-        // this.image = new Image();
-        // this.image.src = 'assets/Arrow/13.png';
       }
 
       draw() {
-        // 1) Find which of the 12 “0°→90° bins” this.angle falls into, and how much to rotate:
-        const { index, rotation } = findArrowIndex(this.angle);
 
-        // 2) Grab that preloaded Image object:
-        const img = arrowImages[index];
-        if (!img) return; // DO NOT REMOVE THIS LINE.
+        // Compute width/height so we can center the draw:
+        const width = this.image.width;
+        const height = this.image.height;
 
-        // 3) Compute width/height so we can center the draw:
-        const w = img.width;
-        const h = img.height;
-
-
-        // 4) Translate to projectile‐center, rotate, then draw the arrow centered:
         ctx.save();
         ctx.translate(this.position.x, this.position.y);
-        ctx.rotate(rotation);
-        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+        ctx.rotate(this.rotation);
+        ctx.drawImage(this.image, -width / 2, -height / 2, width, height);
         ctx.restore();
       }
 
       update() {
-        this.draw();
+        
         this.angle = Math.atan2(this.enemy.center.y - this.position.y, 
           this.enemy.center.x - this.position.x); // grab angle to travel towards enemy
         //console.log(this.angle);
@@ -233,11 +248,16 @@ export default function GameCanvas() {
         this.position.x += this.velocity.x;
         this.position.y += this.velocity.y;
 
+        // Find which of the 12 “0°→90° bins” this.angle falls into, and how much to rotate:
+        const { index, rotation } = findArrowIndex(this.angle);
+        this.image = arrowImages[index];
+        this.rotation = rotation;
         //console.log(this.angle);
+        super.draw(ctx, this.position, rotation);
       }
     }
 
-    const placementTiles = []
+
  
     placementSelectData2D.forEach((row, y) => {
       row.forEach((num, x) => {
@@ -251,12 +271,8 @@ export default function GameCanvas() {
           }))
         }
       })
-    })
+    });
 
-    
-
-    const enemies = []
-    
     // wave spawn functionality
     function spawnWave(enemyCount) {
       for (let i = 1; i < enemyCount+1; i++) {
@@ -267,10 +283,6 @@ export default function GameCanvas() {
       }
     }
     
-
-    let currTile = undefined;
-    const towers = [];
-    let numEnemies = 3;
     spawnWave(numEnemies);
     // ===========  ANIMATION =========== //
 
