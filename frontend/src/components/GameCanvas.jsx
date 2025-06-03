@@ -56,6 +56,11 @@ export default function GameCanvas() {
       arrowImages.push(img);
     }
 
+    const slimeImage = new Image();
+    slimeImage.src = 'assets/Slime/D_Walk.png'
+    const archerTowerImage = new Image();
+    archerTowerImage.src = 'assets/ArcherTower/Idle/2.png'
+
     // Converts placementSelectData to 2D array
     for (let i = 0; i < placementSelectData.length; i += MAP_WIDTH) {
       placementSelectData2D.push(placementSelectData.slice(i, i + MAP_WIDTH)); // slices every x tiles into a list.
@@ -88,26 +93,62 @@ export default function GameCanvas() {
     }
 
     class Sprite {
-      constructor(image ) {
+      constructor( { image, frames = { max: 1, hold: 30}, scale = 1.5 } ) {
         this.image = image;
+        this.rotation = 0;
+        this.frames = {
+          max: frames.max,
+          current: 0,
+          elapsed: 0,
+          hold: frames.hold
+        };
+        this.scale = scale; // draw at 1.5x size
       }
 
-      draw(ctx, position, rotation = 0) {
+      draw(position) {
         if (!this.image) return; // Wait until image is loaded
+        ctx.imageSmoothingEnabled = false; // disables smoothing so scaled pixels remain sharp
+        const cropWidth = this.image.width / this.frames.max;
+        const cropHeight = this.image.height; // animations go horizontally, same height as stagnant
+        const crop = {
+          position: {
+            x: cropWidth * this.frames.current,
+            y: 0
+          },
+          width: cropWidth,
+          height: cropHeight
+        };
 
-        const width = this.image.width;
-        const height = this.image.height;
+        const width = cropWidth * this.scale;
+        const height = cropHeight * this.scale;
 
         ctx.save();
         ctx.translate(position.x, position.y);
-        ctx.rotate(rotation);
-        ctx.drawImage(this.image, -width / 2, -height / 2, width, height);
+        ctx.rotate(this.rotation || 0); // incase this.rotation property doesnt exist, default to 0
+        ctx.drawImage(
+          this.image,
+          crop.position.x, crop.position.y,
+          crop.width, crop.height,
+          -width / 2, -height / 2,
+          width, height
+        );
         ctx.restore();
+
+        this.frames.elapsed++;
+        if (this.frames.elapsed % this.frames.hold === 0) { // frame hold
+          this.frames.current++;
+          if(this.frames.current >= this.frames.max) this.frames.current = 0;
+        }
+        
       }
     }
 
-    class Enemy {
+    class Enemy extends Sprite {
       constructor({ position = { x: 0, y: 0 } }) {
+        super({
+          image: slimeImage, 
+          frames: { max: 6, hold: 30 }
+        });
         this.position = position;
         this.width = 50;
         this.height = 50;
@@ -126,10 +167,7 @@ export default function GameCanvas() {
       }
 
       draw() {
-        ctx.fillStyle = 'red';
-        ctx.beginPath();
-        ctx.arc(this.center.x, this.center.y, this.radius, 0, Math.PI * 2);
-        ctx.fill();
+        super.draw(this.center);
 
         // health
         ctx.fillStyle = 'red';
@@ -169,8 +207,16 @@ export default function GameCanvas() {
       }
     }
 
-    class Tower {
-      constructor( {position = { x:0, y:0 } } ) {
+    class Tower extends Sprite {
+      constructor( { position = { x:0, y:0 } } ) {
+        super( { 
+          image: archerTowerImage,
+          frames: { 
+            max: 4,
+            hold: 40
+          } ,
+          scale: 1
+        } );
         this.position = position;
         this.width = TILE_SIZE * 2;
         this.height = TILE_SIZE * 2;
@@ -185,12 +231,13 @@ export default function GameCanvas() {
       }
 
       draw() {
-        ctx.fillStyle = 'blue';
-        ctx.fillRect(this.position.x, this.position.y, this.width, this.height)
+        super.draw(this.center);
+        // ctx.fillStyle = 'blue';
+        // ctx.fillRect(this.position.x, this.position.y, this.width, this.height)
 
         ctx.beginPath();
         ctx.arc(this.center.x, this.center.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(0, 0, 255, 0.1)'
+        ctx.fillStyle = 'rgba(58, 58, 58, 0.2)'
         ctx.fill()
       }
 
@@ -214,7 +261,7 @@ export default function GameCanvas() {
 
     class Projectile extends Sprite {
       constructor( { position = { x:0, y:0 }, enemy }) {
-        super(null)
+        super({ image: null, frames: { max: 1 }, scale: 1});
         this.position = position;
         this.velocity = {
           x: 0,
@@ -242,7 +289,7 @@ export default function GameCanvas() {
         this.image = arrowImages[index];
         this.rotation = rotation;
         //console.log(this.angle);
-        super.draw(ctx, this.position, rotation);
+        super.draw(this.position);
       }
     }
 
