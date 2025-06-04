@@ -59,7 +59,11 @@ export default function GameCanvas() {
     const slimeImage = new Image();
     slimeImage.src = 'assets/Slime/D_Walk.png'
     const archerTowerImage = new Image();
-    archerTowerImage.src = 'assets/ArcherTower/Idle/2.png'
+    archerTowerImage.src = 'assets/ArcherTower/Idle/3.png'
+    const archerIdleImage = new Image();
+    archerIdleImage.src = 'assets/ArcherTower/Units/2/S_Idle.png' // 4 frame idle
+    const archerAttackImage = new Image();
+    archerAttackImage.src = 'assets/ArcherTower/Units/2/S_Attack.png'; // 6 frame attack
 
     // Converts placementSelectData to 2D array
     for (let i = 0; i < placementSelectData.length; i += MAP_WIDTH) {
@@ -134,6 +138,7 @@ export default function GameCanvas() {
         );
         ctx.restore();
 
+        // advance next frame
         this.frames.elapsed++;
         if (this.frames.elapsed % this.frames.hold === 0) { // frame hold
           this.frames.current++;
@@ -211,10 +216,7 @@ export default function GameCanvas() {
       constructor( { position = { x:0, y:0 } } ) {
         super( { 
           image: archerTowerImage,
-          frames: { 
-            max: 4,
-            hold: 40
-          } ,
+          frames: { max: 4, hold: 40 } ,
           scale: 1
         } );
         this.position = position;
@@ -228,34 +230,84 @@ export default function GameCanvas() {
         this.radius = 150;
         this.target; // decide later in range detection
         this.frameCount = 0;
+        this._prevAttackFrame = 0;
+        this.archerOffsetY = -20; // Will want to shift the archer position dynamically if add tower upgrade!
+
+        // small pixel adjustment: shift everything 2px left and 2px up
+        this.drawOffset = { x: -4, y: -2 };
+
+        this.idleSprite = new Sprite({
+           image: archerIdleImage,
+           frames: { max: 4, hold: 40 },
+           scale: 1 
+        });
+
+        this.attackSprite = new Sprite({
+           image: archerAttackImage,
+           frames: { max: 6, hold: 20 },
+           scale: 1 
+        });
+
+
       }
 
       draw() {
-        super.draw(this.center);
-        // ctx.fillStyle = 'blue';
-        // ctx.fillRect(this.position.x, this.position.y, this.width, this.height)
+        if (this.image) {
+          // “bottom-left” of the footprint is at:
+          const bx = this.position.x + this.drawOffset.x;
+          const by = this.position.y + this.height + this.drawOffset.y;
+
+          // sprite’s crop‐width & crop‐height (in world) are:
+          const cropW = this.image.width / this.frames.max;
+          const cropH = this.image.height;
+          const drawW = cropW * this.scale;
+          const drawH = cropH * this.scale;
+
+          // must shift “bottom-left” into sprite center:
+          const px = bx + drawW / 2;
+          const py = by - drawH / 2;
+
+          // draw tower sprite so its bottom-left lands on (bx,by):
+          this.rotation = 0;
+          super.draw({ x: px, y: py });
+        }
 
         ctx.beginPath();
         ctx.arc(this.center.x, this.center.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(58, 58, 58, 0.2)'
-        ctx.fill()
+        ctx.fillStyle = 'rgba(58, 58, 58, 0.2)';
+        ctx.fill();
+
+        const archerPos = { 
+           x: this.center.x, 
+           y: this.center.y + this.archerOffsetY 
+         };
+        // idle if no target in range
+        if (!this.target) {
+          this.idleSprite.rotation = 0;
+          this.idleSprite.draw(archerPos);
+        // if target in range, attack!!!
+        } else {
+          console.log(this.target);
+          this.attackSprite.rotation = 0;
+          this.attackSprite.draw(archerPos);
+        }
       }
 
       update() {
-        this.draw();
-        if (this.frameCount % 150 === 0 && this.target) {
-          this.projectiles.push(
-            new Projectile({
-            position: {
-              x: this.center.x,
-              y: this.center.y
-            },
-            enemy: this.target
-            })
-          )
-        }
-        this.frameCount++; // increase timer
-        this.angle = 0; // angle to determine which arrow we draw.
+        // Spawn arrow in timing with the attack animation!
+        const prevFrame = this.attackSprite.frames.current; // remember what attackSprite.frame was last time
+        this.draw(); // draw everything and advance attackSprite.frames.current;
+        const currFrame = this.attackSprite.frames.current;
+         if (this.target && prevFrame !== 5 && currFrame === 5) {
+           // Spawn exactly once at the start of the 6th frame:
+           this.projectiles.push(
+             new Projectile({
+               position: { x: this.center.x, y: this.center.y },
+               enemy: this.target
+             })
+           );
+         }
+
       }
     }
 
