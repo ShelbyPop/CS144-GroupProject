@@ -231,10 +231,12 @@ export default function GameCanvas() {
         this.target; // decide later in range detection
         this.frameCount = 0;
         this._prevAttackFrame = 0;
-        this.archerOffsetY = -20; // Will want to shift the archer position dynamically if add tower upgrade!
 
         // small pixel adjustment: shift everything 2px left and 2px up
-        this.drawOffset = { x: -4, y: -6 };
+        this.drawOffset = { x: -4, y: -10 };
+        this.archerOffsetY = this.drawOffset.y - 16; // Will want to shift the archer position dynamically if add tower upgrade!
+
+        
 
         this.idleSprite = new Sprite({
            image: archerIdleImage,
@@ -287,7 +289,7 @@ export default function GameCanvas() {
           this.idleSprite.draw(archerPos);
         // if target in range, attack!!!
         } else {
-          console.log(this.target);
+          //console.log(this.target);
           this.attackSprite.rotation = 0;
           this.attackSprite.draw(archerPos);
         }
@@ -513,7 +515,7 @@ export default function GameCanvas() {
 
   // GameCanvas html styling
   return (
-    // center canvas-container in window
+    // center canvas-wrapper in window
     <div
       style={{
         width: "100vw",
@@ -525,21 +527,20 @@ export default function GameCanvas() {
       }}
     >
       <div
-        className="canvas-container"
+        className="canvas-wrapper"
         style={{
           position: "relative",
-          width: "768px",
-          height: "512px",
         }}
       >
         <canvas
           ref={canvasRef}
-          style={{
-            width: "100%",
-            height: "100%",
-            imageRendering: "pixelated",
-            display: "block",
-          }}
+          className="game-canvas"
+          // style={{
+          //   width: "100%",
+          //   height: "100%",
+          //   imageRendering: "pixelated",
+          //   display: "block",
+          // }}
         />
 
         
