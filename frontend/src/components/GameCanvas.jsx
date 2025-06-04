@@ -234,7 +234,7 @@ export default function GameCanvas() {
         this.archerOffsetY = -20; // Will want to shift the archer position dynamically if add tower upgrade!
 
         // small pixel adjustment: shift everything 2px left and 2px up
-        this.drawOffset = { x: -4, y: -2 };
+        this.drawOffset = { x: -4, y: -6 };
 
         this.idleSprite = new Sprite({
            image: archerIdleImage,
@@ -302,7 +302,7 @@ export default function GameCanvas() {
            // Spawn exactly once at the start of the 6th frame:
            this.projectiles.push(
              new Projectile({
-               position: { x: this.center.x, y: this.center.y },
+               position: { x: this.center.x, y: this.center.y + this.archerOffsetY },
                enemy: this.target
              })
            );
@@ -497,6 +497,10 @@ export default function GameCanvas() {
               })
             );
             currTile.occupied = true;
+            // Canvas API works by placing whatever is drawn most recently is whats on top. Must sort by y pos to get correct draw order.
+            towers.sort((a,b) => {
+              return a.position.y - b.position.y 
+            })
             return prevCoins - TOWER_COST;
           }
           return prevCoins; // don't change if not enough coins
