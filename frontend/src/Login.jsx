@@ -71,7 +71,7 @@ export default function Login ({ setInputUsername })  {
       <p style={{ fontSize: '0.9rem', marginTop: '1rem' }}>
         Don't have an account?{' '}
         <span
-          style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }}
+          style={{ color: 'rgb(138, 138, 224)', textDecoration: 'underline', cursor: 'pointer' }}
           onClick={() => navigate('/signup')}
         >
           Create an account
