@@ -22,6 +22,14 @@ export default function GameCanvas() {
   const [gameOver, setGameOver] = useState(false);
   const [userHealth, setUserHealth] = useState(USER_MAX_HEALTH);
   const [userCoins, setUserCoins] = useState(USER_START_COINS);
+  const [started, setStarted] = useState(false);
+  const startedRef = useRef(false);
+
+  useEffect(() => {
+    startedRef.current = started;
+  }, [started]);
+
+  const imageLoaded = useRef(false); // ref to see if background img loaded.
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -31,8 +39,8 @@ export default function GameCanvas() {
     canvas.width = 768;
     canvas.height = 512;
 
-    ctx.fillStyle = "white";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // ctx.fillStyle = "white";
+    // ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     const arrowImages = [];
     const enemies = [];
@@ -45,8 +53,14 @@ export default function GameCanvas() {
 
     const image = new Image();
     image.onload = () => {
-      animate();
-    }
+      imageLoaded.current = true;
+      const waitForStart = setInterval(() => {
+        if (startedRef.current) {
+          clearInterval(waitForStart);
+          animate();
+        }
+      }, 100);
+    };
     image.src = 'assets/GameMap.png';
 
     // asset guy named them backwards imo, so pushing 0 deg to 90 degrees order.
@@ -55,15 +69,24 @@ export default function GameCanvas() {
       img.src = `assets/Arrow/${i}.png`;
       arrowImages.push(img);
     }
-
+    
     const slimeImage = new Image();
     slimeImage.src = 'assets/Slime/D_Walk.png'
     const archerTowerImage = new Image();
     archerTowerImage.src = 'assets/ArcherTower/Idle/3.png'
     const archerIdleImage = new Image();
     archerIdleImage.src = 'assets/ArcherTower/Units/2/S_Idle.png' // 4 frame idle
-    const archerAttackImage = new Image();
-    archerAttackImage.src = 'assets/ArcherTower/Units/2/S_Attack.png'; // 6 frame attack
+
+    const archerAttackImage = new Image(); 
+    archerAttackImage.src = 'assets/ArcherTower/Units/2/S_Attack.png'; 
+    // BEGIN ARCHER ANIMATION ROTATION
+    // 6 frame attack animation
+    const archerAttackDownImage = new Image();
+    archerAttackDownImage.src = 'assets/ArcherTower/Units/2/D_Attack.png';
+    const archerAttackUpImage = new Image();
+    archerAttackUpImage.src = 'assets/ArcherTower/Units/2/U_Attack.png';
+    const archerAttackSideImage = new Image();
+    archerAttackSideImage.src = 'assets/ArcherTower/Units/2/S_Attack.png';
 
     // Converts placementSelectData to 2D array
     for (let i = 0; i < placementSelectData.length; i += MAP_WIDTH) {
@@ -107,6 +130,7 @@ export default function GameCanvas() {
           hold: frames.hold
         };
         this.scale = scale; // draw at 1.5x size
+        this.flipHorizontal = false;
       }
 
       draw(position) {
@@ -127,8 +151,17 @@ export default function GameCanvas() {
         const height = cropHeight * this.scale;
 
         ctx.save();
-        ctx.translate(position.x, position.y);
-        ctx.rotate(this.rotation || 0); // incase this.rotation property doesnt exist, default to 0
+        if (this.flipHorizontal) { // Incase we need to mirror an asset.
+          ctx.translate(position.x, position.y);
+          ctx.scale(-1, 1);
+          ctx.rotate(this.rotation || 0); // incase this.rotation property doesnt exist, default to 0
+          ctx.translate(-position.x, -position.y);
+          ctx.translate(position.x, position.y); // redo normal pivot
+        } else {
+          ctx.translate(position.x, position.y);
+          ctx.rotate(this.rotation || 0);
+        }
+
         ctx.drawImage(
           this.image,
           crop.position.x, crop.position.y,
@@ -236,8 +269,6 @@ export default function GameCanvas() {
         this.drawOffset = { x: -4, y: -10 };
         this.archerOffsetY = this.drawOffset.y - 16; // Will want to shift the archer position dynamically if add tower upgrade!
 
-        
-
         this.idleSprite = new Sprite({
            image: archerIdleImage,
            frames: { max: 4, hold: 40 },
@@ -245,11 +276,14 @@ export default function GameCanvas() {
         });
 
         this.attackSprite = new Sprite({
-           image: archerAttackImage,
-           frames: { max: 6, hold: 20 },
+           image: archerAttackSideImage,
+           frames: { max: 6, hold: 23 }, 
            scale: 1 
         });
 
+        this.attackAngle = 0;
+        this.archerDirection = 'side';
+        this.archerFlipped = false;
 
       }
 
@@ -290,6 +324,18 @@ export default function GameCanvas() {
         // if target in range, attack!!!
         } else {
           //console.log(this.target);
+          if (this.archerDirection === 'down') {
+            this.attackSprite.image = archerAttackDownImage;
+          } else if (this.archerDirection === 'up') {
+            this.attackSprite.image = archerAttackUpImage;
+          } else if (this.archerDirection === 'left'){
+            this.attackSprite.image = archerAttackSideImage;
+            this.attackSprite.flipHorizontal = false;
+          } else if (this.archerDirection === 'right'){
+            this.attackSprite.image = archerAttackSideImage;
+            this.attackSprite.flipHorizontal = true;
+          }
+
           this.attackSprite.rotation = 0;
           this.attackSprite.draw(archerPos);
         }
@@ -300,15 +346,41 @@ export default function GameCanvas() {
         const prevFrame = this.attackSprite.frames.current; // remember what attackSprite.frame was last time
         this.draw(); // draw everything and advance attackSprite.frames.current;
         const currFrame = this.attackSprite.frames.current;
-         if (this.target && prevFrame !== 5 && currFrame === 5) {
+        if (this.target && prevFrame !== 5 && currFrame === 5) {
            // Spawn exactly once at the start of the 6th frame:
-           this.projectiles.push(
-             new Projectile({
-               position: { x: this.center.x, y: this.center.y + this.archerOffsetY },
-               enemy: this.target
-             })
-           );
-         }
+
+           // MUST DETERMINE ANGLE HERE, BEFORE LAUNCHING PROJECTILE
+          const dx = this.target.center.x - this.center.x;
+          const dy = this.target.center.y - (this.center.y + this.archerOffsetY);
+          const angle = Math.atan2(dy, dx); // radians
+
+          this.attackAngle = angle;
+
+          // Determine animation direction
+          const deg = angle * (180 / Math.PI); // convert to degrees
+
+          if (deg >= 45 && deg <= 135) {
+            this.archerDirection = 'down';
+            this.archerFlipped = false;
+          } else if (deg >= 135 || deg <= -135) {
+            this.archerDirection = 'left';
+            this.archerFlipped = false;
+          } else if (deg >= -135 && deg <= -45) {
+            this.archerDirection = 'up';
+            this.archerFlipped = false;
+          } else {
+            this.archerDirection = 'right';
+            this.archerFlipped = true;
+          }
+
+
+          this.projectiles.push(
+            new Projectile({
+              position: { x: this.center.x, y: this.center.y + this.archerOffsetY },
+              enemy: this.target
+            })
+          );
+        }
 
       }
     }
@@ -323,6 +395,7 @@ export default function GameCanvas() {
         };
         this.enemy = enemy;
         this.radius = 5;
+        this.angle = 0;
       }
 
       // draw() now pertains to Sprite class we inherit
@@ -330,8 +403,8 @@ export default function GameCanvas() {
       update() {
         
         this.angle = Math.atan2(this.enemy.center.y - this.position.y, 
-          this.enemy.center.x - this.position.x); // grab angle to travel towards enemy
-        //console.log(this.angle);
+        this.enemy.center.x - this.position.x); // grab angle to travel towards enemy
+        console.log(this.angle);
         const speedAmp = 1.8; // speed amplifier to make faster than enemy
         this.velocity.x = Math.cos(this.angle) * speedAmp; 
         this.velocity.y = Math.sin(this.angle) * speedAmp;
@@ -512,7 +585,6 @@ export default function GameCanvas() {
 
   }, []); 
 
-
   // GameCanvas html styling
   return (
     // center canvas-wrapper in window
@@ -617,6 +689,15 @@ export default function GameCanvas() {
         {gameOver && (
           <div className="game-over-overlay">
             <span className="game-over-text">Game Over</span>
+          </div>
+        )}
+
+        {/* Start game overlay */}
+        {!started && (
+          <div className="start-overlay">
+            <button className="start-button" onClick={() => setStarted(true)}>
+              Start Game
+            </button>
           </div>
         )}
       </div>
