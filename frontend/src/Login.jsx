@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login ({ setInputUsername })  {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,9 +19,10 @@ export default function Login ({ setInputUsername })  {
 
       if (res.ok) {
         alert('Logged in successfully!');
-         setInputUsername(username);
+        setInputUsername(username);
         setUsername('');
         setPassword('');
+        navigate('/game')
       } else {
       let errorMessage = 'Error trying to login';
       try {
@@ -63,6 +66,17 @@ export default function Login ({ setInputUsername })  {
 
         <button type="submit">Login</button>
       </form>
+
+      {/* Signup Link */}
+      <p style={{ fontSize: '0.9rem', marginTop: '1rem' }}>
+        Don't have an account?{' '}
+        <span
+          style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }}
+          onClick={() => navigate('/signup')}
+        >
+          Create an account
+        </span>
+      </p>
     </div>
   );
 }
