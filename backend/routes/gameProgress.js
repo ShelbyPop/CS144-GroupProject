@@ -68,4 +68,69 @@ router.get('/viewGameProgress/:username', async(req,res)=>{
   });
 
 
+//update progress like level points etc for a single user
+  router.post('/updateProgress', async (req, res) => {
+  const { userId, time } = req.body;
+
+  try {
+    const progress = await GameProgress.findOne({ gamer: userId });
+
+    if (!progress) {
+      return res.status(404).json({ message: 'Game progress not found for this user.' });
+    }
+
+    // Update progress fields
+    progress.timePlayed += time;
+    progress.progress.levelFinished += 1;
+    progress.progress.totalPoints += 1000;
+    progress.lastlogin = new Date().toISOString();
+
+    await progress.save();
+    res.json({ message: 'Progress updated successfully.', progress });
+
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+});
+
+// View progress for a single user
+router.get('/viewPlayerProgress/:userId', async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const progress = await GameProgress.findOne({ gamer: userId }).populate('gamer', 'username');
+
+    if (!progress) {
+      return res.status(404).json({ message: 'No progress found for this user.' });
+    }
+
+    res.json({
+      username: progress.gamer.username,
+      levelFinished: progress.progress.levelFinished,
+      totalPoints: progress.progress.totalPoints,
+      timePlayed: progress.timePlayed
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+});
+
+// View progress for all users
+router.get('/viewPlayerProgressAll', async (req, res) => {
+  try {
+    const allProgress = await GameProgress.find().populate('gamer', 'username');
+
+    const result = allProgress.map(progress => ({
+      username: progress.gamer.username,
+      levelFinished: progress.progress.levelFinished,
+      totalPoints: progress.progress.totalPoints,
+      timePlayed: progress.timePlayed
+    }));
+
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+});
+
 module.exports = router;
