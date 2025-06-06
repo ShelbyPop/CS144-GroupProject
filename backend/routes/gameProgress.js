@@ -78,26 +78,29 @@ router.post('/setGameProgress/:username/:timePlayed/:levelfinished/:totalpoints'
 });
 
 // POST: Update game progress
-
-router.post('/updateProgress/:username', async (req, res) => {
+router.post('/updateProgress/:username/:timePlayed', async (req, res) => {
   const redisClient = req.app.locals.redis;
-  const { username } = req.params;
-  const { time } = req.body;
+  const { username, timePlayed } = req.params;
+
+  const time = Number(timePlayed);
+  if (isNaN(time) || time <= 0) {
+    return res.status(400).json({ message: 'Invalid timePlayed parameter' });
+  }
 
   try {
-    // Find the user by username first
+    // Find user by username
     const user = await User.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: 'User not found.' });
     }
 
-    // Then find progress by ObjectId
+    // Find progress by user ObjectId
     const progress = await GameProgress.findOne({ gamer: user._id });
     if (!progress) {
       return res.status(404).json({ message: 'Game progress not found for this user.' });
     }
 
-    // Update the progress
+    // Update progress
     progress.timePlayed += time;
     progress.progress.levelFinished += 1;
     progress.progress.totalPoints += 1000;
@@ -111,45 +114,6 @@ router.post('/updateProgress/:username', async (req, res) => {
     res.json({ message: 'Progress updated successfully.', progress });
   } catch (error) {
     console.error('Error updating progress:', error);
-    res.status(500).json({ message: 'Server error', error });
-  }
-});
-
-
-// GET: View player progress by userId
-// GET: View player progress by username
-router.get('/viewPlayerProgress/:username', async (req, res) => {
-  const { username } = req.params;
-  const redisClient = req.app.locals.redis;
-  const cacheKey = `progress:${username}`;
-
-  try {
-    const cached = await redisClient.get(cacheKey);
-    if (cached) {
-      return res.json(JSON.parse(cached));
-    }
-
-    const user = await User.findOne({ username });
-    if (!user) {
-      return res.status(404).json({ message: 'User not found.' });
-    }
-
-    const progress = await GameProgress.findOne({ gamer: user._id }).populate('gamer', 'username');
-    if (!progress) {
-      return res.status(404).json({ message: 'No progress found for this user.' });
-    }
-
-    const response = {
-      username: progress.gamer.username,
-      levelFinished: progress.progress.levelFinished,
-      totalPoints: progress.progress.totalPoints,
-      timePlayed: progress.timePlayed
-    };
-
-    await redisClient.set(cacheKey, JSON.stringify(response));
-    return res.json(response);
-  } catch (error) {
-    console.error('Error fetching player progress:', error);
     res.status(500).json({ message: 'Server error', error });
   }
 });
