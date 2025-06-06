@@ -78,33 +78,33 @@ router.post('/setGameProgress/:username/:timePlayed/:levelfinished/:totalpoints'
 });
 
 // POST: Update game progress
-// POST: Update game progress using username
+
 router.post('/updateProgress/:username', async (req, res) => {
   const redisClient = req.app.locals.redis;
   const { username } = req.params;
   const { time } = req.body;
 
   try {
-    // Find the user by username
+    // Find the user by username first
     const user = await User.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: 'User not found.' });
     }
 
-    // Find their progress
+    // Then find progress by ObjectId
     const progress = await GameProgress.findOne({ gamer: user._id });
     if (!progress) {
       return res.status(404).json({ message: 'Game progress not found for this user.' });
     }
 
-    // Update progress
+    // Update the progress
     progress.timePlayed += time;
     progress.progress.levelFinished += 1;
     progress.progress.totalPoints += 1000;
     progress.lastlogin = new Date().toISOString();
     await progress.save();
 
-    // Clear Redis cache
+    // Clear cache
     await redisClient.del(`progress:${username}`);
     await redisClient.del('progress:all');
 
