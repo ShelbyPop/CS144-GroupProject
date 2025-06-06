@@ -15,6 +15,7 @@ const USER_MAX_HEALTH = 10;
 const USER_START_COINS = 100;
 const TOWER_COST = 50;
 const ENEMY_BOUNTY = 10;
+const REF_HZ = 180;
 
 export default function GameCanvas() {
 
@@ -24,12 +25,36 @@ export default function GameCanvas() {
   const [userCoins, setUserCoins] = useState(USER_START_COINS);
   const [started, setStarted] = useState(false);
   const startedRef = useRef(false);
+  const [frameRateRatio, setFrameRateRatio] = useState(1);
+  const frameRateRatioRef = useRef(1); // VERY IMPORTANT VARIABLE. SETS SPEED DEPENDING ON REFRESH RATE
 
   useEffect(() => {
     startedRef.current = started;
   }, [started]);
 
   const imageLoaded = useRef(false); // ref to see if background img loaded.
+
+  // === FRAMERATE CHECKER === // 
+  useEffect(() => {
+    let lastTime = performance.now();
+    let frameCount = 0;
+    const checkFPS = () => {
+      const now = performance.now();
+      frameCount++;
+
+      if (now - lastTime >= 1000) {
+        const fps = frameCount;
+        const ratio = REF_HZ / fps;
+        setFrameRateRatio(ratio);
+        frameRateRatioRef.current = ratio;
+        frameCount = 0;
+        lastTime = now;
+      }
+      requestAnimationFrame(checkFPS);
+    };
+
+    requestAnimationFrame(checkFPS);
+  }, [])
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -173,7 +198,8 @@ export default function GameCanvas() {
 
         // advance next frame
         this.frames.elapsed++;
-        if (this.frames.elapsed % this.frames.hold === 0) { // frame hold
+        const scaledHold = Math.max(1, Math.floor(this.frames.hold / frameRateRatioRef.current));
+        if (this.frames.elapsed % scaledHold === 0) { // frame hold
           this.frames.current++;
           if(this.frames.current >= this.frames.max) this.frames.current = 0;
         }
@@ -223,7 +249,7 @@ export default function GameCanvas() {
         const xDistance = waypoint.x - this.center.x;
         const angle = Math.atan2(yDistance, xDistance);
         // Angle determines velocity.
-        const speedAmp = 0.6; // speed amplifier, default 1
+        const speedAmp = 0.6 * frameRateRatioRef.current; // speed amplifier, default 1
         this.velocity.x = Math.cos(angle) * speedAmp;
         this.velocity.y = Math.sin(angle) * speedAmp;
         this.position.x += this.velocity.x 
@@ -404,8 +430,9 @@ export default function GameCanvas() {
         
         this.angle = Math.atan2(this.enemy.center.y - this.position.y, 
         this.enemy.center.x - this.position.x); // grab angle to travel towards enemy
-        console.log(this.angle);
-        const speedAmp = 1.8; // speed amplifier to make faster than enemy
+        //console.log(this.angle);
+        const speedAmp = 1.8 * frameRateRatioRef.current; // speed amplifier to make faster than enemy
+        //console.log(frameRateRatioRef.current);
         this.velocity.x = Math.cos(this.angle) * speedAmp; 
         this.velocity.y = Math.sin(this.angle) * speedAmp;
         this.position.x += this.velocity.x;
