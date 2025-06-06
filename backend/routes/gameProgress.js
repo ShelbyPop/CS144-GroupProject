@@ -121,15 +121,7 @@ router.post('/updateProgress/:username/:timePlayed', async (req, res) => {
 
 // GET: View progress for all users
 router.get('/viewPlayerProgressAll', async (req, res) => {
-  const redisClient = req.app.locals.redis;
-  const cacheKey = 'progress:all';
-
   try {
-    const cached = await redisClient.get(cacheKey);
-    if (cached) {
-      return res.json(JSON.parse(cached));
-    }
-
     const allProgress = await GameProgress.find().populate('gamer', 'username');
 
     const result = allProgress.map(progress => ({
@@ -139,11 +131,11 @@ router.get('/viewPlayerProgressAll', async (req, res) => {
       timePlayed: progress.timePlayed
     }));
 
-    await redisClient.set(cacheKey, JSON.stringify(result));
     return res.json(result);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error });
   }
 });
+
 
 module.exports = router;
