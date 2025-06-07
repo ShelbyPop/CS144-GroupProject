@@ -19,7 +19,7 @@ export default function SignUp() {
     }
 
     try {
-      const res = await fetch('http://localhost:3000/api/auth/signup', {
+      const res = await fetch('http://34.19.44.124:3000/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
