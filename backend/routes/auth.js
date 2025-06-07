@@ -21,6 +21,19 @@ router.get('/viewavatarname/:username', async (req, res) => {
 
 });
 
+router.get('/check-password-hash/:username', async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.params.username });
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const isHashed = user.password.startsWith('$2');
+    res.json({ username: user.username, isHashed });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
 /*curl -X POST http://localhost:3000/api/auth/assignavatarname/testuser1/Dragaonball*/
 router.post('/assignavatarname/:username/:avatarname', async (req, res) => {
   const {username,avatarname}= req.params;
