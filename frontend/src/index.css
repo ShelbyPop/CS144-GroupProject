@@ -193,6 +193,35 @@ button:focus-visible {
 
 }
 
+.wave-overlay {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 5;
+}
+
+.skull-icon {
+  width: 36px;
+  height: 36px;
+}
+
+.wave-text {
+  font-size: 1rem;
+  font-weight: bold;
+  text-shadow:
+    -1px -1px 0px #000,
+     1px -1px 0px #000,
+    -1px  1px 0px #000,
+     1px  1px 0px #000;
+}
+
 /* Covers the entire 768×512 canvas-container with a translucent black layer */
 .game-over-overlay {
   position: absolute;
