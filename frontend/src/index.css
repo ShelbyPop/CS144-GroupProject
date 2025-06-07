@@ -244,6 +244,22 @@ button:focus-visible {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 }
 
+.restart-button {
+  padding: 0.75em 1.5em;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #ffffff;
+  background-color: #d43b3b;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-top: 1rem;
+}
+.restart-button:hover {
+  background-color: #a12c2c;
+}
+
 
 @media (prefers-color-scheme: light) {
   :root {

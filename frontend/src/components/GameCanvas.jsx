@@ -757,7 +757,13 @@ export default function GameCanvas() {
         {/* ④ Game-over overlay (shown only when gameOver is true) */}
         {gameOver && (
           <div className="game-over-overlay">
-            <span className="game-over-text">Game Over</span>
+            <div style={{ textAlign: 'center' }}>
+              <span className="game-over-text">Game Over</span>
+              <br />
+              <button className="restart-button" onClick={() => window.location.reload()}>
+                Restart Game
+              </button>
+            </div>
           </div>
         )}
 
