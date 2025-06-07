@@ -1,3 +1,10 @@
+@font-face {
+  font-family: 'MoriaCitadel';
+  src: url('../assets/MoriaCitadel.TTF') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -13,6 +20,13 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;  
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -24,10 +38,13 @@ a:hover {
 
 body {
   margin: 0;
+  padding: 0;
+  height: 100vh;
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;  
+  overflow: hidden;
 }
 
 h1 {
@@ -54,13 +71,33 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+.logo-header {
+  font-family: 'MoriaCitadel', serif;
+  font-size: 2.5rem;
+  text-align: center;
+
+  background: linear-gradient(to bottom, #f3d946, #633701); /* yellow to orange */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text; /* fallback */
+  color: transparent;
+
+  padding: 12px 0;
+  width: 100%;
+  max-width: 768px;
+
+  margin: 0 auto;
+  background-color: rgb(146, 58, 146);
+}
+
+
 /* Covers the entire canvas‐wrapper until “Start Game” is clicked */
 .start-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  inset: 0;
   background-color: rgba(0,0,0,0.5); /* semi‐transparent black */
   display: flex;
   align-items: center;
@@ -88,8 +125,11 @@ button:focus-visible {
   position: relative;
   width: 100%;
   max-width: 768px;
-  padding-bottom: 66.6667%; /* (512 / 768) * 100%, older browsers may not support aspect-ratio*/
+  max-height: 512px;
+  aspect-ratio: 3 / 2;
   position: relative;      /* so overlays can be positioned absolutely */
+  /* max-height: 100vh; */
+  margin-bottom: 200px;
 }
 .canvas-wrapper canvas {
   position: absolute;
@@ -97,7 +137,6 @@ button:focus-visible {
   left: 0;
   width: 100%;
   height: 100%;
-  max-height: 512px;
   display: block;
   image-rendering: pixelated;
 }
@@ -160,12 +199,12 @@ button:focus-visible {
   top: 0;
   left: 0;
   width: 100%;    /* full width of canvas-container */
-  height: 100%;   /* full height of canvas-container */
-  background: rgba(0, 0, 0, 0.6);
+  inset: 0;   /* full height of canvas-container */
+  background: rgba(0, 0, 0, 5);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10;    /* sits on top of the canvas */
+  z-index: 20;    /* sits on top of the canvas */
   -webkit-text-stroke: 2px black;
 }
 
@@ -194,6 +233,6 @@ button:focus-visible {
 @media (max-width: 768px) {
   .canvas-wrapper {
     max-width: 768px;
-    padding-bottom: 66.6667%;
+    padding-bottom: 0;
   }
 }
