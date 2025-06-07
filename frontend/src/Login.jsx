@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './login.css'; // 🔗 Import the CSS file
 
-export default function Login ({ setInputUsername })  {
+export default function Login({ setInputUsername }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ export default function Login ({ setInputUsername })  {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
-        credentials: 'include', 
+        credentials: 'include',
       });
 
       if (res.ok) {
@@ -22,18 +23,17 @@ export default function Login ({ setInputUsername })  {
         setInputUsername(username);
         setUsername('');
         setPassword('');
-        navigate('/game')
+        navigate('/game');
       } else {
-      let errorMessage = 'Error trying to login';
-      try {
-        const data = await res.json();
-        if (data && data.error) errorMessage = data.error;
-      } catch (_) {
-      
+        let errorMessage = 'Error trying to login';
+        try {
+          const data = await res.json();
+          if (data && data.error) errorMessage = data.error;
+        } catch (_) {
+          // ignore JSON parse errors
+        }
+        alert(errorMessage);
       }
-      alert(errorMessage);
-    }
-  
     } catch (error) {
       console.error('Network error, please try again.', error);
       alert('Network error, please try again.');
@@ -41,42 +41,40 @@ export default function Login ({ setInputUsername })  {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Username:</label>
-          <input
-            type="text"
-            value={username}
-            onChange={e => setUsername(e.target.value)}
-            required
-          />
-        </div>
+    <div className="login-container">
+      <div className="login-card">
+        <h2>Login</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Username:</label>
+            <input
+              type="text"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+              required
+            />
+          </div>
 
-        <div>
-          <label>Password:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            required
-          />
-        </div>
+          <div className="form-group">
+            <label>Password:</label>
+            <input
+              type="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required
+            />
+          </div>
 
-        <button type="submit">Login</button>
-      </form>
+          <button type="submit">Login</button>
+        </form>
 
-      {/* Signup Link */}
-      <p style={{ fontSize: '0.9rem', marginTop: '1rem' }}>
-        Don't have an account?{' '}
-        <span
-          style={{ color: 'rgb(138, 138, 224)', textDecoration: 'underline', cursor: 'pointer' }}
-          onClick={() => navigate('/signup')}
-        >
-          Create an account
-        </span>
-      </p>
+        <p className="signup-link">
+          Don't have an account?{' '}
+          <span onClick={() => navigate('/signup')}>
+            Create an account
+          </span>
+        </p>
+      </div>
     </div>
   );
 }
