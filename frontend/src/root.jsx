@@ -8,14 +8,15 @@ export default function Root() {
   const [username, setUsername] = useState('');
 
   return (
-  <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<Login setInputUsername={setUsername} />} />
-      <Route path="/signup" element={<SignUp />} />
-      {username && (
-        <Route path="/game" element={<App username={username} />} />
-      )}
-    </Routes>
-  </BrowserRouter>
-);
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Login setInputUsername={setUsername} />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route
+          path="/game"
+          element={<App username={username} setInputUsername={setUsername} />}
+        />
+      </Routes>
+    </BrowserRouter>
+  );
 }

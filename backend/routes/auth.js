@@ -2,6 +2,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const router = express.Router();
+const requireAuth = require('../middleware/auth');
 
 const createToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
@@ -80,7 +81,20 @@ router.post('/signup', async (req, res) => {
   }
 });
 
+router.get('/me', async (req, res) => {
+  const token = req.cookies.token;
+  if (!token) return res.status(401).json({ error: 'Not authenticated' });
 
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id).select('username avatarname');
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    res.json({ username: user.username, avatarname: user.avatarname });
+  } catch (err) {
+    res.status(401).json({ error: 'Invalid or expired token' });
+  }
+});
 
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
@@ -106,9 +120,6 @@ router.post('/logout', (req, res) => {
   res.clearCookie('token');
   res.status(200).json({ message: 'Logged out' });
 });
-
-
-
 
 
 module.exports = router;

@@ -246,12 +246,12 @@ button:focus-visible {
 
 .restart-button {
   padding: 0.75em 1.5em;
-  font-size: 1.25rem;
+  font-size: 1.75rem;
   font-weight: bold;
   color: #ffffff;
   background-color: #d43b3b;
   border: none;
-  border-radius: 8px;
+  border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.2s ease;
   margin-top: 1rem;

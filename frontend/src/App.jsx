@@ -1,17 +1,34 @@
 // src/App.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
 import GameCanvas from "./components/GameCanvas.jsx";
 
-export default function App({ username }) {
+export default function App({ username: propUsername, setInputUsername }) {
+  const [username, setUsername] = useState(propUsername || null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!username) {
-      navigate('/');
+    // If no username passed in props, try to fetch from /me
+    if (!propUsername) {
+      fetch("http://34.19.44.124:3000/api/auth/me", {
+        method: "GET",
+        credentials: "include", // important to send cookie
+      })
+        .then(res => {
+          if (!res.ok) throw new Error("Not logged in");
+          return res.json();
+        })
+        .then(data => {
+          setUsername(data.username);
+          if (setInputUsername) setInputUsername(data.username); // update parent if needed
+        })
+        .catch(() => {
+          navigate("/"); // redirect to login if not authenticated
+        });
     }
-  }, [username]);
+  }, [propUsername]);
+
+  if (!username) return null; // Optionally show a loading spinner
 
   return (
     <div>
