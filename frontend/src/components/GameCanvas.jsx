@@ -113,6 +113,16 @@ export default function GameCanvas() {
     const archerAttackSideImage = new Image();
     archerAttackSideImage.src = 'assets/ArcherTower/Units/2/S_Attack.png';
 
+    const slimeDamageSound = new Audio('/assets/Sounds/Slime damage.mp3');
+    slimeDamageSound.volume = 0.3;
+    const userDamageSound = new Audio('/assets/Sounds/User damage.ogg');
+    userDamageSound.volume = 0.3;
+    const gameOverSound = new Audio('/assets/Sounds/Game Over.ogg')
+    gameOverSound.volume = 0.5;
+    const buildingSound = new Audio('/assets/Sounds/building.ogg')
+    buildingSound.volume = 0.5;
+
+
     // Converts placementSelectData to 2D array
     for (let i = 0; i < placementSelectData.length; i += MAP_WIDTH) {
       placementSelectData2D.push(placementSelectData.slice(i, i + MAP_WIDTH)); // slices every x tiles into a list.
@@ -223,7 +233,8 @@ export default function GameCanvas() {
           y: this.position.y + this.height / 2
         };
         this.radius = 25;
-        this.health = 50;
+        this.maxHealth = 60;
+        this.health = this.maxHealth;
         this.velocity = {
           x: 0,
           y: 0
@@ -233,11 +244,16 @@ export default function GameCanvas() {
       draw() {
         super.draw(this.center);
 
+        const healthRatio = this.health / this.maxHealth;
+        const barWidth = this.width;
+        const barX = this.position.x;
+        const barY = this.position.y - 10;
+
         // health
         ctx.fillStyle = 'red';
-        ctx.fillRect(this.position.x, this.position.y-10, this.width, 7)
+        ctx.fillRect(barX, barY, barWidth , 7)
         ctx.fillStyle = 'green';
-        ctx.fillRect(this.position.x, this.position.y-10, this.width * this.health / 50 , 7)
+        ctx.fillRect(barX, barY, barWidth  * healthRatio , 7)
 
       }
 
@@ -488,8 +504,12 @@ export default function GameCanvas() {
           // DON'T CLAMP DAMAGE TAKEN. If we clamp, may keep triggering game over on every enemy exit (Likely not wanted)
           setUserHealth((prev) => {
             const newHealth = prev - 1;
+            userDamageSound.currentTime = 0;
+            userDamageSound.play();
             if (newHealth <= 0) {
               setGameOver(true);
+              gameOverSound.currentTime = 0;
+              gameOverSound.play();
               cancelAnimationFrame(animationId);
             }
             return newHealth;
@@ -534,6 +554,8 @@ export default function GameCanvas() {
           // when projectile hits enemy:
           if (dist < projectile.enemy.radius + projectile.radius) { 
             projectile.enemy.health -= TOWER_DAMAGE;
+            slimeDamageSound.currentTime = 0;  // rewind if playing rapidly
+            slimeDamageSound.play();
             if (projectile.enemy.health <= 0) {
               const enemyIdx = enemies.findIndex((enemy) => {
                 return projectile.enemy === enemy;
@@ -598,6 +620,8 @@ export default function GameCanvas() {
                 }
               })
             );
+            buildingSound.currentTime = 0;
+            buildingSound.play();
             currTile.occupied = true;
             // Canvas API works by placing whatever is drawn most recently is whats on top. Must sort by y pos to get correct draw order.
             towers.sort((a,b) => {
