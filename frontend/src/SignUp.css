@@ -14,12 +14,19 @@
   padding: 1rem;
 }
 
+
 .signpage .signup-form .form-group {
   margin-bottom: 1rem;
 }
-.signpage .form-group{
-      font-family: 'Comic Sans MS', 'Comic Sans', cursive, 'Segoe UI Rounded', 'Arial Rounded MT Bold', Arial, sans-serif;
-
+.signpage .form-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column; 
+  width: 100%;
+  
+  max-width: 400px;
+  margin-bottom: 10px;
 }
 
 .signpage .password-wrapper {
@@ -33,10 +40,14 @@
   transform: translateY(-50%);
   cursor: pointer;
 }
-
+.add-space-top {
+  margin-top: 20px; 
+}
 .signpage button[type="submit"] {
+    margin-top: 4px;
   width: 100%;
   padding: 0.8rem 0;
+ padding-top: 4px;
   font-size: 1.2rem;
   font-family: inherit;
   font-weight: 700;
@@ -50,6 +61,8 @@
     0 6px 10px rgba(0, 0, 0, 0.7);
   transition: background-color 0.3s ease, box-shadow 0.2s ease;
   user-select: none;
+
+    
 }
 
 .signpage .link{
@@ -111,6 +124,7 @@
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
   padding: 0.6rem 1.2rem;
+ 
   margin-top: 1rem;
   font-size: 1.1rem;
   font-weight: 600;
@@ -170,6 +184,7 @@ font-size: 3rem;
   .signpage .signup-button {
     font-size: 1rem;
     padding: 0.6rem 1rem;
+
   }
 }
 
@@ -183,6 +198,7 @@ font-size: 3rem;
     font-size: 0.95rem;
     padding: 0.4rem 0.6rem;
   }
+  
 
   .signpage .signup-title {
     font-size: 2rem;
@@ -191,6 +207,16 @@ font-size: 3rem;
   .signpage .signup-button {
     font-size: 0.95rem;
     padding: 0.5rem 1rem;
+  
+  }
+  .signpage .form-group{
+      width: 100%;
+        display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column; 
+       position: relative;
+
   }
 
   .signpage .signup-login-link {
