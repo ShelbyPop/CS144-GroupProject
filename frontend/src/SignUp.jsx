@@ -44,8 +44,8 @@ export default function SignUp() {
     <div className='signpage' >
     <div className="signup-container">
       <h2 className="signup-title">Sign Up</h2>
-      <form onSubmit={handleSignup}>
-        <div className="form-group">
+      <form className='.form-group'  onSubmit={handleSignup}>
+        <div >
           <label className="signup-label" >Email:</label>
           <input className="signup-input" 
             type="email"
@@ -55,7 +55,7 @@ export default function SignUp() {
           />
         </div>
 
-        <div className="form-group">
+        <div >
           <label className="signup-label" >Username:</label>
           <input className="signup-input" 
             type="text"
@@ -65,7 +65,7 @@ export default function SignUp() {
           />
         </div>
 
-        <div className="form-group">
+        <div >
           <label className="signup-label">Password:</label>
           <div style={{ position: 'relative' }}>
             <input className="signup-input" 
@@ -104,7 +104,7 @@ export default function SignUp() {
           </div>
         </div>
 
-        <div className="form-group">
+        <div >
           <label className="signup-label" >Confirm Password:</label>
           <div style={{ position: 'relative' }}>
             <input className="signup-input" 
@@ -142,7 +142,7 @@ export default function SignUp() {
             </span>
           </div>
         </div>
-
+          <div className="add-space-top"></div>
         <button type="submit" >Create Account</button>
       </form>
 
@@ -157,7 +157,7 @@ export default function SignUp() {
         </span>
       </p>
 
-      <p> We use cookies to improve your experience, analyze site traffic, and personalize content. By continuing to sign up for our site, you agree to our use of cookies.</p>
+      <p   style={{ fontSize: '10px' }}> We use cookies to improve your experience, analyze site traffic, and personalize content. By continuing to sign up for our site, you agree to our use of cookies.</p>
     </div>
     </div>
   );
