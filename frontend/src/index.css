@@ -102,7 +102,14 @@ button:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
   z-index: 20; /* ensures it sits above canvas and health overlay */
+}
+
+.start-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* Styles for the “Start Game” button */
@@ -111,7 +118,7 @@ button:focus-visible {
   font-size: 1.25rem;
   font-weight: bold;
   color: #ffffff;
-  background-color: #1e90ff;
+  background-color: #06c000;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -258,6 +265,32 @@ button:focus-visible {
 }
 .restart-button:hover {
   background-color: #a12c2c;
+}
+
+.tutorial-box {
+  margin-top: 20px;
+  padding: 12px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  border-radius: 12px;
+  max-width: 600px;
+  font-size: 14px;
+}
+
+.tutorial-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.tutorial-item .icon {
+  margin-right: 8px;
+  font-size: 18px;
+}
+
+.tutorial-item img {
+  margin-right: 8px;
+  image-rendering: pixelated;
 }
 
 
