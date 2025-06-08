@@ -1,30 +1,27 @@
-.login-container {
+.loginpage ,.login-container {
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
- 
-  font-family: 'Comic Sans MS', 'Comic Sans', cursive, 'Segoe UI Rounded', 'Arial Rounded MT Bold', Arial, sans-serif;
-  padding: 2rem;
+   background-color: #111;
+  font-family: 'Comic Sans MS', 'Comic Sans';
+  padding: 2rem; 
 }
-html, body {
+body {
   height: 100%;
   margin: 0;
   padding: 0;
   background: linear-gradient(135deg, black 5%,  darkmagenta 100%);
 }
 
-.login-card {
-  background-color: #111;
-  padding: 2.5rem 3rem;
+.loginpage .login-card {
   border-radius: 12px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
   width: 320px;
   color: white;
   text-align: center;
 }
 
-.login-card h2 {
+.loginpage .login-card h2 {
   font-size: 3rem;
   color: lightgreen;
   position: relative;
@@ -36,20 +33,10 @@ html, body {
   user-select: none;
 }
 
-.form-group {
-  margin-bottom: 1.5rem;
-  text-align: left;
-}
 
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-}
 
-.form-group input {
-  width: 100%;
-  padding: 0.6rem 0.8rem;
+.loginpage .form-group input {
+  width: 500px;
   border-radius: 8px;
   border: none;
   font-size: 1.1rem;
@@ -61,12 +48,12 @@ html, body {
   transition: box-shadow 0.3s ease;
 }
 
-.form-group input:focus {
+.loginpage .form-group input:focus {
   box-shadow: inset 0 0 8px lightgreen;
 }
 
-button[type="submit"] {
-  width: 100%;
+.loginpage button[type="submit"] {
+  width: 300px;
   padding: 0.8rem 0;
   font-size: 1.2rem;
   font-family: inherit;
@@ -83,7 +70,7 @@ button[type="submit"] {
   user-select: none;
 }
 
-button[type="submit"]:hover {
+.loginpage button[type="submit"]:hover {
   background-color: #004080;
   box-shadow:
     0 2px 0 #001933,
@@ -91,92 +78,90 @@ button[type="submit"]:hover {
   transform: translateY(2px);
 }
 
-button[type="submit"]:active {
+.loginpage button[type="submit"]:active {
   box-shadow: none;
   transform: translateY(4px);
 }
 
-.signup-link {
+.loginpage .signup-link {
   margin-top: 1.8rem;
   font-size: 0.95rem;
   color: white;
   user-select: none;
 }
 
-.signup-link span {
+.loginpage .signup-link span {
   color: lightgreen;
   cursor: pointer;
   font-weight: 700;
   text-decoration: underline;
 }
 
-.signup-link span:hover {
+.loginpage .signup-link span:hover {
   color: #90ee90;
 }
 
-@media (min-width: 1201px) {
-  .login-card {
+ @media (min-width: 1201px) {
+.loginpage   .login-card {
     width: 400px;
     padding: 3rem 4rem;
   }
-  .login-card h2 {
+.loginpage   .login-card h2 {
     font-size: 4rem;
   }
-  button[type="submit"] {
+.loginpage   button[type="submit"] {
     font-size: 1.5rem;
     padding: 1rem 0;
+      width: 100%;
   }
-  .form-group input {
+.loginpage   .form-group input {
     font-size: 1.3rem;
     padding: 0.8rem 1rem;
   }
-  .signup-link {
+.loginpage   .signup-link {
     font-size: 1.1rem;
   }
 }
 
-@media (max-width: 1200px) and (min-width: 801px) {
-  .login-card {
-    width: 350px;
-    padding: 2.8rem 3.5rem;
+ @media (max-width: 1200px) and (min-width: 501px) {
+.loginpage   .login-card {
+    width:  500px;
+    
   }
-  .login-card h2 {
-    font-size: 3.5rem;
-  }
-  button[type="submit"] {
+   
+.loginpage   button[type="submit"] {
     font-size: 1.3rem;
     padding: 0.9rem 0;
+    width:100%;
   }
-  .form-group input {
+.loginpage   .form-group input {
     font-size: 1.2rem;
     padding: 0.7rem 0.9rem;
   }
-  .signup-link {
+.loginpage   .signup-link {
     font-size: 1rem;
   }
 }
 
-@media (max-width: 500px) {
-  .login-container {
+ @media (max-width: 500px) {
+.loginpage   .login-container {
     padding: 1rem;
+    width: 50%;
+    height: 50%;
   }
-  .login-card {
-    width: 100%;
-    padding: 1.5rem 2rem;
+.loginpage   .login-card {
+    width: 300px;
   }
-  .login-card h2 {
-    font-size: 2.2rem;
-    margin-bottom: 1.2rem;
-  }
-  button[type="submit"] {
+ 
+.loginpage   button[type="submit"] {
     font-size: 1rem;
     padding: 0.7rem 0;
   }
-  .form-group input {
+.loginpage   .form-group input {
     font-size: 1rem;
     padding: 0.5rem 0.7rem;
   }
-  .signup-link {
+.loginpage   .signup-link {
     font-size: 0.9rem;
   }
 }
