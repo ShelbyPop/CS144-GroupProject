@@ -38,7 +38,7 @@ export default function App({ username: propUsername, setInputUsername }) {
       <div style={{ padding: "8px", background: "#222", color: "#fff" }}>
         Logged in as: {username}
       </div>
-      <GameCanvas />
+      <GameCanvas username={username} />
     </div>
   );
 }

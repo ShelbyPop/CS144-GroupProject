@@ -18,7 +18,7 @@ const TOWER_COST = 50;
 const ENEMY_BOUNTY = 10;
 const REF_HZ = 180;
 
-export default function GameCanvas() {
+export default function GameCanvas({ username }) {
 
   const canvasRef = useRef(null);
   const [gameOver, setGameOver] = useState(false);
@@ -492,6 +492,23 @@ export default function GameCanvas() {
       waveRef.current += 1;
       setWave(waveRef.current);
       console.log(waveRef.current);
+      const currentWave = waveRef.current ?? 1; // fallback if undefined
+      fetch(`http://34.19.44.124:3000/api/gameProgress/updateProgress/${username}/${currentWave}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+      })
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to update progress');
+        return res.json();
+      })
+      .then(data => {
+        console.log("Wave progress uploaded:", data);
+      })
+      .catch(err => {
+        console.error("Progress update error:", err);
+      });
+
       for (let i = 1; i < enemyCount+1; i++) {
         const xOffset = i * 75;
         enemies.push(new Enemy({
