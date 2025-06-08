@@ -32,8 +32,17 @@ export default defineConfig({
           }
         ]
       },
-
-      // workbox for runtime caching of data to be sent to the server to be added
+      workbox: {
+        runtimeCaching: [
+          {
+            urlPattern: "/\/reconnecting/",
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "html-cache"
+            }
+          }
+        ]
+      }
     }),
   ],
   server: {
