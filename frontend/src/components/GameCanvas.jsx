@@ -747,7 +747,7 @@ export default function GameCanvas() {
               </button>
               <div className="tutorial-box">
                 <div className="tutorial-item">
-                  <span><Coin />: This is your money! Towers cost 10 <Coin /></span>
+                  <span><Coin />: This is your money!</span>
                 </div>
                 <div className="tutorial-item">
                   <span><Heart />: These are your lives! Don't let it hit 0 <Heart />. If it does, Game Over!</span>
