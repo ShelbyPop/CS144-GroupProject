@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import GameCanvas from "./components/GameCanvas.jsx";
+import Progress from "./components/Progress.jsx"
 
 export default function App({ username: propUsername, setInputUsername }) {
   const [username, setUsername] = useState(propUsername || null);
@@ -38,6 +39,7 @@ export default function App({ username: propUsername, setInputUsername }) {
       <div style={{ padding: "8px", background: "#222", color: "#fff" }}>
         Logged in as: {username}
       </div>
+      <Progress></Progress>
       <GameCanvas />
     </div>
   );
