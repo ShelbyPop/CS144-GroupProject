@@ -115,7 +115,9 @@ router.post('/updateProgress/:username/:waveCounter', async (req, res) => {
 
    
     progress.timePlayed += timeDifference;
-    progress.progress.levelFinished += waves;
+   if (waves > progress.progress.levelFinished) {
+  progress.progress.levelFinished = waves;
+        }
     progress.progress.totalPoints += 1000 * waves;
     progress.lastlogin = now.toISOString();
 
