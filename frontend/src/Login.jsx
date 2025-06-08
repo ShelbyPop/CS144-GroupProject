@@ -42,8 +42,8 @@ export default function Login({ setInputUsername }) {
 
   return (
     <div className="login-container">
-      <div className="login-card">
-        <h2>Login</h2>
+      <div className="login-card" >
+        <h2 >Login</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Username:</label>
