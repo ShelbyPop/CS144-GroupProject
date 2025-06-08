@@ -37,7 +37,7 @@ router.get('/viewGameProgress/:username', async (req, res) => {
   }
 });
 
-// POST: Set game progress for a user
+
 router.post('/setGameProgress/:username/:timePlayed/:levelfinished/:totalpoints', async (req, res) => {
   const redisClient = req.app.locals.redis;
 
@@ -77,57 +77,70 @@ router.post('/setGameProgress/:username/:timePlayed/:levelfinished/:totalpoints'
   }
 });
 
-// POST: Update game progress
-router.post('/updateProgress/:username/:timePlayed', async (req, res) => {
+// POST: Update game progress or make new game progress for user
+router.post('/updateProgress/:username/:waveCounter', async (req, res) => {
   const redisClient = req.app.locals.redis;
-  const { username, timePlayed } = req.params;
+  const { username, waveCounter } = req.params;
 
-  const time = Number(timePlayed);
-  if (isNaN(time) || time <= 0) {
-    return res.status(400).json({ message: 'Invalid timePlayed parameter' });
+  const waves = Number(waveCounter);
+  if (isNaN(waves) || waves <= 0) {
+    return res.status(400).json({ message: 'Invalid waveCounter parameter' });
   }
 
   try {
-    // Find user by username
     const user = await User.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: 'User not found.' });
     }
 
-    // Find progress by user ObjectId
-    const progress = await GameProgress.findOne({ gamer: user._id });
+    let progress = await GameProgress.findOne({ gamer: user._id });
+
+    const now = new Date();
+    let timeDifference = 0;
+
     if (!progress) {
-      return res.status(404).json({ message: 'Game progress not found for this user.' });
+      progress = new GameProgress({
+        gamer: user._id,
+        timePlayed: 0,
+        progress: {
+          levelFinished: waves,
+          totalPoints: waves*1000
+        },
+        lastlogin: now.toISOString()
+      });
+    } else {
+      const lastLogin = new Date(progress.lastlogin);
+      timeDifference = Math.floor((now - lastLogin) / 1000); 
     }
 
-    // Update progress
-    progress.timePlayed += time;
-    progress.progress.levelFinished += 1;
-    progress.progress.totalPoints += 1000;
-    progress.lastlogin = new Date().toISOString();
+   
+    progress.timePlayed += timeDifference;
+    progress.progress.levelFinished += waves;
+    progress.progress.totalPoints += 1000 * waves;
+    progress.lastlogin = now.toISOString();
+
     await progress.save();
 
-    // Clear cache
     await redisClient.del(`progress:${username}`);
     await redisClient.del('progress:all');
 
-    res.json({ message: 'Progress updated successfully.', progress });
+    res.json({ message: 'Progress saved or created', progress });
   } catch (error) {
-    console.error('Error updating progress:', error);
-    res.status(500).json({ message: 'Server error', error });
+    console.error('Error saving or creating progress:', error);
+    res.status(500).json({ message: 'Error', error });
   }
 });
+
 
 
 // GET: View progress for all users
 router.get('/viewPlayerProgressAll', async (req, res) => {
   try {
-    const allProgress = await GameProgress.find().populate('gamer', 'username');
+    const allProgress = await GameProgress.find().populate('gamer', 'username').sort({ 'progress.levelFinished': -1 }).limit(5);
 
     const result = allProgress.map(progress => ({
       username: progress.gamer.username,
       levelFinished: progress.progress.levelFinished,
-      totalPoints: progress.progress.totalPoints,
       timePlayed: progress.timePlayed
     }));
 
