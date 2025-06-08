@@ -117,6 +117,8 @@ export default function GameCanvas() {
 
     const slimeDamageSound = new Audio('/assets/Sounds/Slime damage.mp3');
     slimeDamageSound.volume = 0.3;
+    const slimeDeathSound = new Audio('/assets/Sounds/Slime death.mp3');
+    slimeDeathSound.volume = 0.3;
     const userDamageSound = new Audio('/assets/Sounds/User damage.ogg');
     userDamageSound.volume = 0.3;
     const gameOverSound = new Audio('/assets/Sounds/Game Over.ogg')
@@ -559,13 +561,21 @@ export default function GameCanvas() {
           // when projectile hits enemy:
           if (dist < projectile.enemy.radius + projectile.radius) { 
             projectile.enemy.health -= TOWER_DAMAGE;
-            slimeDamageSound.currentTime = 0;  // rewind if playing rapidly
-            slimeDamageSound.play();
+            if (projectile.enemy.health == 0) {
+              slimeDeathSound.currentTime = 0;  
+              slimeDeathSound.play();
+            } else if ( projectile.enemy.health > 0){
+              slimeDamageSound.currentTime = 0;  // rewind if playing rapidly
+              slimeDamageSound.play();
+            } // else play no sound
+            
             if (projectile.enemy.health <= 0) {
               const enemyIdx = enemies.findIndex((enemy) => {
                 return projectile.enemy === enemy;
               })
               // clamp index find if not found.
+
+              
               if (enemyIdx > -1) {
                 enemies.splice(enemyIdx, 1); // splice on killing enemy
                 setUserCoins(prevCoins => prevCoins + ENEMY_BOUNTY);
