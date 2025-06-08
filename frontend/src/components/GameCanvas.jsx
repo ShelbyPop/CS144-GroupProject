@@ -701,11 +701,13 @@ export default function GameCanvas({ username }) {
     <div
       style={{
         width: "100vw",
-        height: "100vh",
         background: "#222",
         display: "flex",
+        flexDirection: "column", // ✅ STACK canvas and progress vertically
         alignItems: "center",
-        justifyContent: "center",
+        justifyContent: "flex-start",
+        paddingTop: "32px", // optional spacing above canvas
+        paddingBottom: "32px", // optional spacing below
       }}
     >
       <div
