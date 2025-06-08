@@ -155,6 +155,8 @@ export default function SignUp() {
           Log in here
         </span>
       </p>
+    <p> We use cookies to improve your experience, analyze site traffic, and personalize content. By continuing to sign up for our site, you agree to our use of cookies.</p>
+
     </div>
   );
 }
