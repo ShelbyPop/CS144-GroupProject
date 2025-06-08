@@ -41,12 +41,13 @@ export default function SignUp() {
   };
 
   return (
+    <div className='signpage' >
     <div className="signup-container">
       <h2 className="signup-title">Sign Up</h2>
       <form onSubmit={handleSignup}>
         <div className="form-group">
           <label className="signup-label" >Email:</label>
-          <input
+          <input className="signup-input" 
             type="email"
             required
             value={email}
@@ -56,7 +57,7 @@ export default function SignUp() {
 
         <div className="form-group">
           <label className="signup-label" >Username:</label>
-          <input
+          <input className="signup-input" 
             type="text"
             required
             value={username}
@@ -67,7 +68,7 @@ export default function SignUp() {
         <div className="form-group">
           <label className="signup-label">Password:</label>
           <div style={{ position: 'relative' }}>
-            <input
+            <input className="signup-input" 
               type={showPassword ? 'text' : 'password'}
               required
               value={password}
@@ -106,7 +107,7 @@ export default function SignUp() {
         <div className="form-group">
           <label className="signup-label" >Confirm Password:</label>
           <div style={{ position: 'relative' }}>
-            <input
+            <input className="signup-input" 
               type={showConfirm ? 'text' : 'password'}
               required
               value={confirm}
@@ -155,8 +156,9 @@ export default function SignUp() {
           Log in here
         </span>
       </p>
-    <p> We use cookies to improve your experience, analyze site traffic, and personalize content. By continuing to sign up for our site, you agree to our use of cookies.</p>
 
+      <p> We use cookies to improve your experience, analyze site traffic, and personalize content. By continuing to sign up for our site, you agree to our use of cookies.</p>
+    </div>
     </div>
   );
 }
