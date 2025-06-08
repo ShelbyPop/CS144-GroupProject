@@ -144,15 +144,20 @@ body {
 }
 
  @media (max-width: 500px) {
-.loginpage   .login-container {
+  .loginpage .login-card h2 {
+    font-size: 2rem;
+  }
+  .loginpage .login-container {
     padding: 1rem;
-    width: 50%;
-    height: 50%;
+    width: 100%; 
+    height: auto; 
+    flex-direction: column;
   }
-.loginpage   .login-card {
-    width: 300px;
+
+.loginpage .login-card {
+    width: 90%;
+    padding: 1rem;
   }
- 
 .loginpage   button[type="submit"] {
     font-size: 1rem;
     padding: 0.7rem 0;
@@ -161,6 +166,11 @@ body {
     font-size: 1rem;
     padding: 0.5rem 0.7rem;
   }
+  .loginpage .form-group input {
+  width: 100%;
+  max-width: 500px;
+}
+
 .loginpage   .signup-link {
     font-size: 0.9rem;
   }
