@@ -41,12 +41,18 @@ export default function Login({ setInputUsername }) {
   };
 
   return (
+      <div className="loginpage">
+
     <div className="login-container">
-      <div className="login-card">
-        <h2>Login</h2>
+      <div>
+        < div className="login-card">
+        <h2 >Login</h2> </div>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>Username:</label>
+            
+            <label className="signup-link">Username:</label>
+            <br></br>
+          
             <input
               type="text"
               value={username}
@@ -56,7 +62,9 @@ export default function Login({ setInputUsername }) {
           </div>
 
           <div className="form-group">
-            <label>Password:</label>
+            <label className="signup-link">Password:</label>
+             <br></br>
+             
             <input
               type="password"
               value={password}
@@ -64,8 +72,9 @@ export default function Login({ setInputUsername }) {
               required
             />
           </div>
+          <br></br>
 
-          <button type="submit">Login</button>
+          <button type="submit" >Login</button>
         </form>
 
         <p className="signup-link">
@@ -75,6 +84,7 @@ export default function Login({ setInputUsername }) {
           </span>
         </p>
       </div>
+    </div>
     </div>
   );
 }
