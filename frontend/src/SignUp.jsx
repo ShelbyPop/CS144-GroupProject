@@ -11,6 +11,8 @@ export default function SignUp() {
   const [showConfirm, setShowConfirm] = useState(false);
   const navigate = useNavigate();
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const handleSignup = async (e) => {
     e.preventDefault();
 
@@ -20,7 +22,7 @@ export default function SignUp() {
     }
 
     try {
-      const res = await fetch('http://34.19.44.124:3000/api/auth/signup', {
+      const res = await fetch(`${API_URL}/api/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
