@@ -20,3 +20,5 @@ steps:
 images:
   - 'us-west1-docker.pkg.dev/cs144-25s-team24/cs144-groupproject/frontend:latest'
   - 'us-west1-docker.pkg.dev/cs144-25s-team24/cs144-groupproject/backend:latest'
+
+logsBucket: gs://ironkeep
