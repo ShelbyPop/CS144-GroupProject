@@ -13,6 +13,10 @@ export default function App({ username: propUsername, setInputUsername }) {
   useEffect(() => {
     // If no username passed in props, try to fetch from /me
     if (!propUsername) {
+      if (!navigator.onLine) {
+        navigate("/reconnecting");
+        return;
+      }
       fetch(`/api/auth/me`, {
         method: "GET",
         credentials: "include", // important to send cookie
@@ -26,6 +30,7 @@ export default function App({ username: propUsername, setInputUsername }) {
           if (setInputUsername) setInputUsername(data.username); // update parent if needed
         })
         .catch(() => {
+          console.error("Not authenticated, redirecting to login");
           navigate("/"); // redirect to login if not authenticated
         });
     }

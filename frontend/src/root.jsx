@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './Login.jsx';
 import SignUp from './SignUp.jsx';
 import App from './App.jsx';
+import Reconnecting from './Reconnecting.jsx';
 
 export default function Root() {
   const [username, setUsername] = useState('');
@@ -16,6 +17,7 @@ export default function Root() {
           path="/game"
           element={<App username={username} setInputUsername={setUsername} />}
         />
+        <Route path="/reconnecting" element={<Reconnecting />} />
       </Routes>
     </BrowserRouter>
   );
