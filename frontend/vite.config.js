@@ -55,4 +55,7 @@ export default defineConfig({
       },
     },
   },
+  preview: {
+    allowedHosts: ['team24.cs144.org'],
+  },
 })

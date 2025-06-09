@@ -3,7 +3,7 @@
 apiVersion: networking.gke.io/v1beta1
 kind: FrontendConfig
 metadata:
-  name: default-redirect-config
+  name: redirect-config
 spec:
   redirectToHttps:
     enabled: true

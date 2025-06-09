@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: us-west1-docker.pkg.dev/cs144-25s-team24/cs144-groupproject/frontend:v11   #v1 is deterministic
+        image: us-west1-docker.pkg.dev/cs144-25s-team24/cs144-groupproject/frontend:v13   #v1 is deterministic
         imagePullPolicy: Always
         ports:
         - containerPort: 4173  # port that container listens on
@@ -37,8 +37,6 @@ spec:
           value: "cc6bc98d3a7dc2c67f4d16b7383ac5e0c3d323480240f056065112b0adf0cff633f0fab2280abd2e93f65064214ffb98b5c677aba6cfe9bb280c2d4ef5518dc7"
         - name: CORS_ALLOWED_ORIGIN
           value: "http://34.168.120.250:5173"
-        - name: CONTAINER_NAME
-          value: "banana"
       - name: redis
         image: redis
         ports:
