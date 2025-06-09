@@ -39,3 +39,7 @@ spec:
           value: "http://34.168.120.250:5173"
         - name: CONTAINER_NAME
           value: "banana"
+      - name: redis
+        image: redis
+        ports:
+          - containerPort: 6379
