@@ -15,7 +15,7 @@ steps:
     env:
       - 'CLOUDSDK_COMPUTE_REGION=us-west1-c'
       - 'CLOUDSDK_CONTAINER_CLUSTER=ironkeep'
-    args: ['apply', '-f', 'k8s/']
+    args: ['apply', '-f', './k8s/']
 
 images:
   - 'us-west1-docker.pkg.dev/cs144-25s-team24/cs144-groupproject/frontend:latest'
