@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: service1
+  name: game-app-service
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: game
   ports:

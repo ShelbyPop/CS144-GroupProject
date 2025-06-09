@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: us-west1-docker.pkg.dev/cs144-25s-team24/cs144-groupproject/frontend:v9   #v1 is deterministic
+        image: us-west1-docker.pkg.dev/cs144-25s-team24/cs144-groupproject/frontend:v11   #v1 is deterministic
         imagePullPolicy: Always
         ports:
         - containerPort: 4173  # port that container listens on
