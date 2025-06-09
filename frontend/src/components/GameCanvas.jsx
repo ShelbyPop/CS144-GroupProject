@@ -493,7 +493,7 @@ export default function GameCanvas({ username }) {
       setWave(waveRef.current);
       console.log(waveRef.current);
       const currentWave = waveRef.current ?? 1; // fallback if undefined
-      fetch(`http://34.19.44.124:3000/api/gameProgress/updateProgress/${username}/${currentWave}`, {
+      fetch(`/api/gameProgress/updateProgress/${username}/${currentWave}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './SignUp.css';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function SignUp() {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
@@ -20,7 +22,7 @@ export default function SignUp() {
     }
 
     try {
-      const res = await fetch('http://34.19.44.124:3000/api/auth/signup', {
+      const res = await fetch(`/api/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

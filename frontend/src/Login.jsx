@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.css'; 
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function Login({ setInputUsername }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -11,7 +13,7 @@ export default function Login({ setInputUsername }) {
     e.preventDefault();
 
     try {
-      const res = await fetch('http://34.19.44.124:3000/api/auth/login', {
+      const res = await fetch(`/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),

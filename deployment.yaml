@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: game
+spec:
+  replicas: 1   # pods 
+  selector:
+    matchLabels:
+      app: game
+  template:
+    metadata:
+      labels:
+        app: game
+    spec:
+      containers:
+      - name: frontend
+        image: us-west1-docker.pkg.dev/cs144-25s-team24/cs144-groupproject/frontend:v9   #v1 is deterministic
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 4173  # port that container listens on
+        env:
+        - name: VITE_API_URL
+          value: "http://0.0.0.0:3000"
+      - name: backend
+        image: us-west1-docker.pkg.dev/cs144-25s-team24/cs144-groupproject/backend:v3
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 3000
+        env:
+        - name: PORT
+          value: "3000"
+        - name: NODE_ENV
+          value: "production"
+        - name: MONGO_URI
+          value: "mongodb+srv://admin:e47UYRWqm7OEObW1@cs144-project.b6gdp3h.mongodb.net/?retryWrites=true&w=majority&appName=cs144-project"
+        - name: JWT_SECRET
+          value: "cc6bc98d3a7dc2c67f4d16b7383ac5e0c3d323480240f056065112b0adf0cff633f0fab2280abd2e93f65064214ffb98b5c677aba6cfe9bb280c2d4ef5518dc7"
+        - name: CORS_ALLOWED_ORIGIN
+          value: "http://34.168.120.250:5173"
+        - name: CONTAINER_NAME
+          value: "banana"

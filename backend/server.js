@@ -12,8 +12,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(cors({
-  origin: ['http://localhost:5173',  'http://34.19.44.124:5173'],
-  credentials: true,
+  origin: "*",
+  credentials: false,
 }));
 
 // Initialize Redis client

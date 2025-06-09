@@ -4,7 +4,7 @@ const Leaderboard = () => {
   const [players, setPlayers] = useState([]);
 
   const fetchData = () => {
-    fetch('http://34.19.44.124:3000/api/gameProgress/viewPlayerProgressAll')
+    fetch('/api/gameProgress/viewPlayerProgressAll')
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch leaderboard');
         return res.json();
