@@ -13,7 +13,7 @@ steps:
 
   - name: 'gcr.io/cloud-builders/kubectl'
     env:
-      - 'CLOUDSDK_COMPUTE_REGION=us-west1'
+      - 'CLOUDSDK_COMPUTE_REGION=us-west1-c'
       - 'CLOUDSDK_CONTAINER_CLUSTER=ironkeep'
     args: ['apply', '-f', 'k8s/']
 
