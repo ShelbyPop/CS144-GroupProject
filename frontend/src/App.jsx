@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import GameCanvas from "./components/GameCanvas.jsx";
-import Progress from "./components/Progress.jsx";
+import Progress from "./components/Progress.jsx"
 
 const API_URL = import.meta.env.VITE_API_URL;
 

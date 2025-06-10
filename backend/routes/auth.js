@@ -69,7 +69,7 @@ router.post('/signup', async (req, res) => {
     res.cookie('token', token, {
       httpOnly: true,
       secure: true,
-      sameSite: 'Strict',
+      sameSite: 'Strict', // prevents CSRF
       maxAge: 60 * 60 * 1000,
     });
 

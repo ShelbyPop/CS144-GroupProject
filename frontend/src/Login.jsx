@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.css'; 
+import CookieBanner from './components/CookieBanner.jsx';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -87,6 +88,7 @@ export default function Login({ setInputUsername }) {
         </p>
       </div>
     </div>
+    <CookieBanner />
     </div>
   );
 }
