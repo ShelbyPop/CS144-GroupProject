@@ -4,8 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import GameCanvas from "./components/GameCanvas.jsx";
 import Progress from "./components/Progress.jsx"
 
-const API_URL = import.meta.env.VITE_API_URL;
-
 export default function App({ username: propUsername, setInputUsername }) {
   const [username, setUsername] = useState(propUsername || null);
   const navigate = useNavigate();
