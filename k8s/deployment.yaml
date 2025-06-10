@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: us-west1-docker.pkg.dev/cs144-25s-team24/cs144-groupproject/frontend:v13   #v1 is deterministic
+        image: us-west1-docker.pkg.dev/cs144-25s-team24/cs144-groupproject/frontend:latest   #v1 is deterministic
         imagePullPolicy: Always
         ports:
         - containerPort: 4173  # port that container listens on
@@ -22,7 +22,7 @@ spec:
         - name: VITE_API_URL
           value: "http://0.0.0.0:3000"
       - name: backend
-        image: us-west1-docker.pkg.dev/cs144-25s-team24/cs144-groupproject/backend:v3
+        image: us-west1-docker.pkg.dev/cs144-25s-team24/cs144-groupproject/backend:latest
         imagePullPolicy: Always
         ports:
           - containerPort: 3000
