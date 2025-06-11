@@ -16,13 +16,6 @@ spec:
     - host: team24.cs144.org    # Replace with your actual domain
       http:
         paths:
-          - path: /api/*
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: api-service
-                port:
-                  number: 80
           - path: /
             pathType: Prefix
             backend:
