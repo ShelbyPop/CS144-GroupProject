@@ -20,7 +20,7 @@ app.use(mongoSanitize({
 }));
 
 
-appp.use(cors({
+app.use(cors({
   origin: ['http://localhost:5173', 'https://team24.cs144.org'],
   credentials: true,
 }));
