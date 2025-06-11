@@ -746,11 +746,14 @@ export default function GameCanvas({ username }) {
 
         {/* Game-over overlay (shown only when gameOver is true) */}
         {gameOver && (
-          <div className="game-over-overlay">
+          <div className="game-over-overlay"
+          role="alertdialog"
+          aria-labelledby="game-over-title"
+          aria-describedby="game-over-desc">
             <div style={{ textAlign: 'center' }}>
-              <span className="game-over-text">Game Over</span>
+              <span id="game-over-title" className="game-over-text">Game Over</span>
               <br />
-              <button className="restart-button" onClick={() => window.location.reload()}>
+              <button id="game-over-desc" className="restart-button" onClick={() => window.location.reload()}>
                 Restart Game
               </button>
             </div>
@@ -759,9 +762,9 @@ export default function GameCanvas({ username }) {
 
         {/* Start game overlay */}
         {!started && (
-          <div className="start-overlay">
+          <div className="start-overlay" role="dialog" aria-labelledby="start-button">
             <div className="start-content">
-              <button className="start-button" onClick={() => setStarted(true)}>
+              <button id="start-button" className="start-button" onClick={() => setStarted(true)}>
                 Start Game
               </button>
               <div className="tutorial-box">

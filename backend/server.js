@@ -11,10 +11,10 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
-app.use(cors({
-  origin: "*",
-  credentials: false,
-}));
+const openCors = cors({
+  origin: ['http://localhost:5173', 'https://team24.cs144.org'],
+  credentials: true,
+});
 
 // Initialize Redis client
 const redisClient = createClient({
@@ -36,7 +36,6 @@ redisClient.connect()
 
 app.use('/api/auth', authRoutes);
 app.use('/api/gameProgress', gameProgressRoutes);
-
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log('Connected to MongoDB');

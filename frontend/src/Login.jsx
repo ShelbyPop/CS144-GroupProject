@@ -80,7 +80,10 @@ export default function Login({ setInputUsername }) {
 
         <p className="signup-link">
           Don't have an account?{' '}
-          <span onClick={() => navigate('/signup')}>
+          <span
+            role="button"
+            aria-label="Create an account"
+            onClick={() => navigate('/signup')}>
             Create an account
           </span>
         </p>

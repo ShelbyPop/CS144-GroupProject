@@ -46,7 +46,7 @@ export default function SignUp() {
       <h2 className="signup-title">Sign Up</h2>
       <form className='.form-group'  onSubmit={handleSignup}>
         <div >
-          <label className="signup-label" >Email:</label>
+          <label className="signup-label">Email:</label>
           <input className="signup-input" 
             type="email"
             required
@@ -76,6 +76,9 @@ export default function SignUp() {
               style={{ paddingRight: '2rem' }}
             />
             <span
+              role="button"
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              aria-pressed={showPassword}
               onClick={() => setShowPassword(prev => !prev)}
               style={{
                 position: 'absolute',
@@ -116,6 +119,9 @@ export default function SignUp() {
             />
             <span
               onClick={() => setShowConfirm(prev => !prev)}
+              role="button"
+              aria-label={showConfirm ? "Hide confirm password" : "Show confirm password"}
+              aria-pressed={showConfirm}
               style={{
                 position: 'absolute',
                 right: '8px',
