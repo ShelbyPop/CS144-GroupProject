@@ -20,12 +20,8 @@ export default function CookieBanner() {
     <div
         className="cookie-banner"
         role="alertdialog"
-        aria-labelledby="cookie-banner-heading"
         aria-describedby="cookie-banner-desc"
     >
-    <p id="cookie-banner-heading" style={{ fontWeight: 'bold' }}>
-      Cookie Notice
-    </p>
     <p id="cookie-banner-desc">
       This site uses cookies to enhance user experience and for authentication purposes.
       By continuing, you agree to our use of cookies.
