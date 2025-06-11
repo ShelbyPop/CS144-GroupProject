@@ -6,10 +6,12 @@ const authRoutes = require('./routes/auth.js');
 const gameProgressRoutes = require('./routes/gameProgress.js');
 const cors = require('cors');
 const { createClient } = require('redis');
+const mongoSanitizer = require('express-mongo-sanitize');
 
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+app.use(mongoSanitizer());
 
 const openCors = cors({
   origin: ['http://localhost:5173', 'https://team24.cs144.org'],

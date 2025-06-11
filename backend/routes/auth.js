@@ -8,7 +8,7 @@ const createToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn
 
 //curl -X GET http://localhost:3000/api/auth/viewavatarname/testuser1  should get back Dragaonball
 router.get('/viewavatarname/:username', async (req, res) => {
-   const { username } = req.params;
+   const username = String(req.params.username || '').trim();
    try{
     const player = await User.findOne({ username: username });
      if (!player) {
@@ -24,7 +24,8 @@ router.get('/viewavatarname/:username', async (req, res) => {
 
 router.get('/check-password-hash/:username', async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.params.username });
+    const username = String(req.params.username || '').trim();
+    const user = await User.findOne({ username });
     if (!user) return res.status(404).json({ error: 'User not found' });
 
     const isHashed = user.password.startsWith('$2');
@@ -37,7 +38,8 @@ router.get('/check-password-hash/:username', async (req, res) => {
 
 /*curl -X POST http://localhost:3000/api/auth/assignavatarname/testuser1/Dragaonball*/
 router.post('/assignavatarname/:username/:avatarname', async (req, res) => {
-  const {username,avatarname}= req.params;
+  const username = String(req.params.username || '').trim();
+  const avatarname = String(req.params.avatarname || '').trim();
   try{
     const player = await User.findOne({ username:username });
     if (!player){
@@ -54,7 +56,9 @@ router.post('/assignavatarname/:username/:avatarname', async (req, res) => {
 });
 
 router.post('/signup', async (req, res) => {
-  const { username, password, email } = req.body;
+  const username = String(req.body.username || '').trim();
+  const password = String(req.body.password || '');
+  const email = String(req.body.email || '').trim();
 
   try {
     const existing = await User.findOne({ username  });
@@ -97,7 +101,8 @@ router.get('/me', async (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
-  const { username, password } = req.body;
+  const username = String(req.body.username || '').trim();
+  const password = String(req.body.password || '');
   const user = await User.findOne({ username });
 
   if (!user || !(await user.comparePassword(password))) {

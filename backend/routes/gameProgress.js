@@ -6,7 +6,7 @@ const router = express.Router();
 
 // GET: View game progress by username
 router.get('/viewGameProgress/:username', async (req, res) => {
-  const { username } = req.params;
+  const username = String(req.params.username || '').trim();
   const redisClient = req.app.locals.redis;
   const cacheKey = `progress:${username}`;
 
@@ -42,7 +42,10 @@ router.post('/setGameProgress/:username/:timePlayed/:levelfinished/:totalpoints'
   const redisClient = req.app.locals.redis;
 
   try {
-    const { username, timePlayed, levelfinished, totalpoints } = req.params;
+    const username = String(req.params.username || '').trim();
+    const timePlayed = Number(req.params.timePlayed);
+    const levelfinished = Number(req.params.levelfinished);
+    const totalpoints = Number(req.params.totalpoints);
     const user = await User.findOne({ username });
 
     if (!user) {
@@ -80,9 +83,9 @@ router.post('/setGameProgress/:username/:timePlayed/:levelfinished/:totalpoints'
 // POST: Update game progress or make new game progress for user
 router.post('/updateProgress/:username/:waveCounter', async (req, res) => {
   const redisClient = req.app.locals.redis;
-  const { username, waveCounter } = req.params;
+  const username = String(req.params.username || '').trim();
+  const waves = Number(req.params.waveCounter);
 
-  const waves = Number(waveCounter);
   if (isNaN(waves) || waves <= 0) {
     return res.status(400).json({ message: 'Invalid waveCounter parameter' });
   }
