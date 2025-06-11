@@ -4,7 +4,7 @@
 3. Open /frontend/ in a separate terminal, and run 'npx vite' or 'npx run dev' on port 5173
 4. Test Login is:
 - User: testuser3
-- Password: test3
+- Password: test3 
 
 # TO PLAY THE GAME
 - Each Grass platform is an available spot to place a 2x2 tower on. 
