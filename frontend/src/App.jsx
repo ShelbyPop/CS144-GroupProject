@@ -4,9 +4,49 @@ import { useNavigate } from 'react-router-dom';
 import GameCanvas from "./components/GameCanvas.jsx";
 import Progress from "./components/Progress.jsx"
 
+// Flush any wave saves that failed while offline.
+// Keeps items in the queue if the server is still unreachable.
+async function flushPendingProgress() {
+  let queue;
+  try {
+    queue = JSON.parse(localStorage.getItem('pendingProgress') || '[]');
+  } catch {
+    return;
+  }
+  if (queue.length === 0) return;
+
+  console.log(`Syncing ${queue.length} queued wave save(s)…`);
+  const remaining = [];
+  for (const item of queue) {
+    try {
+      const res = await fetch(
+        `/api/gameProgress/updateProgress/${item.username}/${item.wave}`,
+        { method: 'POST', credentials: 'include' }
+      );
+      if (!res.ok) {
+        // Server-side error (e.g. 500) — keep it and retry next time
+        remaining.push(item);
+      } else {
+        console.log(`Synced queued wave ${item.wave} for ${item.username}`);
+      }
+    } catch {
+      // Still no connectivity — keep all remaining items
+      remaining.push(item);
+    }
+  }
+  localStorage.setItem('pendingProgress', JSON.stringify(remaining));
+}
+
 export default function App({ username: propUsername, setInputUsername }) {
   const [username, setUsername] = useState(propUsername || null);
   const navigate = useNavigate();
+
+  // Flush queued progress on mount and whenever connectivity is restored
+  useEffect(() => {
+    flushPendingProgress();
+    window.addEventListener('online', flushPendingProgress);
+    return () => window.removeEventListener('online', flushPendingProgress);
+  }, []);
 
   useEffect(() => {
     // If no username passed in props, try to fetch from /me

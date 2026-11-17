@@ -506,7 +506,15 @@ export default function GameCanvas({ username }) {
         console.log("Wave progress uploaded:", data);
       })
       .catch(err => {
-        console.error("Progress update error:", err);
+        console.error("Progress update error — queuing for later sync:", err);
+        // Save locally so it can be replayed when connectivity returns
+        try {
+          const queue = JSON.parse(localStorage.getItem('pendingProgress') || '[]');
+          queue.push({ username, wave: currentWave, timestamp: Date.now() });
+          localStorage.setItem('pendingProgress', JSON.stringify(queue));
+        } catch (storageErr) {
+          console.error("Could not write to localStorage:", storageErr);
+        }
       });
 
       for (let i = 1; i < enemyCount+1; i++) {
